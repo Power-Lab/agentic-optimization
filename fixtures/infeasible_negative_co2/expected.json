@@ -1,0 +1,8 @@
+{
+  "termination_status": "INFEASIBLE",
+  "error_origin": "solver",
+  "root_cause_contains": "CO2",
+  "real_fix_tier": "C",
+  "refiner_must_block": true,
+  "note": "Grid emissions are non-negative, so emissions <= -1 is unsatisfiable. The only feasibility-restoring change is relaxing CO2_limit, a policy constraint."
+}

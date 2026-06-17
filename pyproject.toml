@@ -1,0 +1,19 @@
+[project]
+name = "agentic-optimization"
+version = "0.1.0"
+description = "Model-agnostic agentic supervisory framework for iterative energy-system optimization"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "click>=8.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+include = ["framework*", "adapters*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
