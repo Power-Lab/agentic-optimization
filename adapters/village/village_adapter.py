@@ -87,9 +87,10 @@ class VillageAdapter(Adapter):
 
     # ---- adapter interface --------------------------------------------
 
-    def validate_config(self, config: Dict[str, Any]) -> ValidationResult:
-        """Fast, Gurobi-free preflight (the heavier julia --preflight-only gate
-        is available via :meth:`julia_preflight`)."""
+    @staticmethod
+    def validate_schema(config: Dict[str, Any]) -> List[str]:
+        """Filesystem-free schema checks (keys + enums). Shared by local and
+        remote adapters."""
         errors: List[str] = []
 
         missing = [k for k in REQUIRED_KEYS if k not in config]
@@ -105,6 +106,13 @@ class VillageAdapter(Adapter):
         clean = config.get("clean")
         if clean is not None and clean not in CLEAN_ENUM:
             errors.append(f"Unknown clean flag {clean!r}; legal values: {', '.join(CLEAN_ENUM)}")
+
+        return errors
+
+    def validate_config(self, config: Dict[str, Any]) -> ValidationResult:
+        """Fast, Gurobi-free preflight (the heavier julia --preflight-only gate
+        is available via :meth:`julia_preflight`)."""
+        errors = self.validate_schema(config)
 
         if "island" in config and "year" in config:
             ip = self.inputs_path(config)
@@ -169,6 +177,24 @@ class VillageAdapter(Adapter):
         if not out_dir.is_dir():
             return {}
         return {p.stem: p for p in sorted(out_dir.glob("*.csv"))}
+
+    def describe_config(self) -> str:
+        return (
+            "Village-Indonesia capacity-expansion model (case study).\n"
+            f"Required keys: {', '.join(REQUIRED_KEYS)}.\n"
+            f"Legal `scenario`: {', '.join(SCENARIO_ENUM)} "
+            "(captive/gridcaptive are legacy aliases). Semantics: base=no grid, "
+            "no village build; village=standalone village build; grid=grid "
+            "expansion only; gridvillage=coordinated grid+village; nocoal=coal "
+            "banned; highimportprice=higher village import price.\n"
+            f"Legal `clean`: {', '.join(CLEAN_ENUM)} (clean enforces the CO2 cap "
+            "and RE-share floor — a POLICY lever).\n"
+            f"Optional passthrough: {', '.join(PASSTHROUGH_KEYS)} "
+            "(mipgap=numeric; import_price/village_storage_max_mwh=parameters; "
+            "RE_limit=policy floor).\n"
+            "There is no direct 'X% solar' knob — penetration is an outcome of "
+            "costs/resources, not a config key."
+        )
 
     # ---- helpers -------------------------------------------------------
 

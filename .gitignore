@@ -10,3 +10,6 @@ build/
 dist/
 .venv/
 venv/
+
+# macOS
+.DS_Store

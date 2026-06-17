@@ -55,3 +55,18 @@ class Adapter(ABC):
     def locate_outputs(self, run_dir: Path) -> Dict[str, Path]:
         """Map a stable metric/output name to the file that holds it, so the
         output-analyzer does not hard-code this model's filenames."""
+
+    def describe_config(self) -> str:
+        """Human-readable description of this model's config schema and levers,
+        so the (model-agnostic) scenario-builder/refiner skills can learn the
+        model from the adapter instead of hard-coding it. Default derives a
+        summary from the intervention spec; adapters should override with a
+        fuller description of keys and scenario semantics."""
+        spec = self.intervention_spec()
+        return (
+            f"Adapter '{self.name}'. Intervention tiers — "
+            f"A/auto (numerics): {sorted(spec.tier_a_keys)}; "
+            f"B/auto+flag (params): {sorted(spec.tier_b_keys)}; "
+            f"C/human-only (policy): {sorted(spec.tier_c_keys)}. "
+            f"Enumerated legal values: {spec.allowed_values or '{}'}."
+        )

@@ -9,7 +9,7 @@ Runs ``base_maluku_2030_reference`` live through the VillageAdapter and checks:
 Must pass before any skill is built on top of the runner.
 
 Usage:
-    python scripts/smoke_test.py [--no-bootstrap] [--tol 1e-6]
+    python examples/village/smoke_test.py [--no-bootstrap] [--tol 1e-6]
 """
 
 from __future__ import annotations
@@ -21,12 +21,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from adapters.village import VillageAdapter  # noqa: E402
 from framework import run_and_record  # noqa: E402
 
-FRAMEWORK_ROOT = Path(__file__).resolve().parents[1]
+FRAMEWORK_ROOT = Path(__file__).resolve().parents[2]
 MODEL_ROOT = FRAMEWORK_ROOT / "models" / "village"
 RESULTS_NAME = "base_maluku_2030_reference"
 RUN_DIR = FRAMEWORK_ROOT / "runs" / "smoke_base_maluku"

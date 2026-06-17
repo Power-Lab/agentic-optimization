@@ -5,7 +5,7 @@ Runs the `infeasible_negative_co2` fixture live, then shows the refiner refusing
 to "fix" it by relaxing the carbon cap — the scientific-integrity guardrail in
 action. Contrasts with a Tier-A change that *is* auto-applied.
 
-    python scripts/demo_refine_loop.py
+    python examples/village/demo_refine_loop.py
 """
 
 from __future__ import annotations
@@ -14,7 +14,8 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
 sys.path.insert(0, str(ROOT))
 
 from adapters.village import VillageAdapter            # noqa: E402
@@ -22,7 +23,7 @@ from framework import (                                # noqa: E402
     Diagnosis, ProposedChange, RunRecord, apply_refinements, run_and_record,
 )
 
-FIXTURE = ROOT / "fixtures" / "infeasible_negative_co2"
+FIXTURE = HERE / "fixtures" / "infeasible_negative_co2"
 RUN_DIR = ROOT / "runs" / "demo_infeasible_co2"
 
 

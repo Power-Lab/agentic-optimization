@@ -1,7 +1,8 @@
 """Fixture-level checks that need no solver.
 
-The infeasibility fixture requires a live solve (see scripts/demo_refine_loop.py);
-the validation-catchable fixtures are checked here, fast.
+The infeasibility fixture requires a live solve (see
+examples/village/demo_refine_loop.py); the validation-catchable fixtures are
+checked here, fast.
 """
 
 import json
@@ -10,7 +11,7 @@ from pathlib import Path
 from adapters.village import VillageAdapter
 
 ROOT = Path(__file__).resolve().parents[1]
-FIXTURES = ROOT / "fixtures"
+FIXTURES = ROOT / "examples" / "village" / "fixtures"
 ADAPTER = VillageAdapter()
 
 
