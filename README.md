@@ -5,6 +5,11 @@ optimization. LLM agents do the labor-intensive workflow glue — build scenario
 run → read logs → read outputs → refine → iterate — while the optimization model
 and solver stay fully deterministic.
 
+> **New here / a modeler, not an engineer?** Start with the
+> **[User Guide](docs/USER_GUIDE.md)** — a long, plain-language walkthrough of what
+> this is, how to use it (by talking to it or from Python), and what every file
+> means.
+
 This repo is the prototype for the *Agentic AI for Iterative Energy System
 Modeling* concept. All six concept-note tasks are implemented as composable
 agent skills:
