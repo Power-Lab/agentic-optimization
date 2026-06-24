@@ -1,0 +1,25 @@
+=== Mock Solver Log (MVP proof-of-concept) — INFEASIBLE path with IIS ===
+Timestamp: 2024-01-01T08:15:00Z
+Run ID: run_id_002
+Model type: unit_commitment
+Region: ERCOT
+Horizon T=24 steps
+
+Gurobi 10.0.3 (mock)
+Set parameter MIPGap to value 0.001
+Set parameter TimeLimit to value 600
+Set parameter Threads to value 8
+
+Presolve: 80 rows removed, 40 columns removed
+
+Model is infeasible
+IIS computed: emission_cap[total], power_balance[t=08], power_balance[t=09], renewable_penetration_minimum
+Likely cause: EMISSION_CAP_TOO_TIGHT
+
+Note: The emission cap of 800 tCO2 cannot be satisfied simultaneously with the
+renewable penetration minimum of 70% given the current generator fleet. During
+hours 8-10, solar generation is unavailable and wind capacity is insufficient
+to meet both demand and the renewable target without committing thermal units.
+The thermal units produce emissions that would exceed the cap.
+
+Solve time: 12.4s

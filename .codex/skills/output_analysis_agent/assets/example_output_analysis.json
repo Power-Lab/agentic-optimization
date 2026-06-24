@@ -1,0 +1,126 @@
+{
+  "run_id": "run_id_anomalous_004",
+  "analyzed_at": "2024-01-01T10:45:00Z",
+  "overall_status": "ANOMALY",
+  "dispatch_file": "example_output.csv",
+  "_note": "Anomalous dispatch: solar_1 and wind_1 timeseries were silently zeroed during solution parsing (parsing error). gas_cc_1 runs flat at P_max (600 MW) all 24 hours without load-following. load_shedding_MW=0 everywhere. Result: over-supply at off-peak hours, large unserved demand at peak hours, emission cap exceeded, renewable target missed.",
+  "power_balance": {
+    "violations_over_supply": [
+      {"timestep": 0,  "demand_MW": 524.84,  "supply_MW": 600.0, "imbalance_MW": 75.16,  "type": "OVER_SUPPLY"},
+      {"timestep": 1,  "demand_MW": 499.22,  "supply_MW": 600.0, "imbalance_MW": 100.78, "type": "OVER_SUPPLY"},
+      {"timestep": 2,  "demand_MW": 480.23,  "supply_MW": 600.0, "imbalance_MW": 119.77, "type": "OVER_SUPPLY"},
+      {"timestep": 3,  "demand_MW": 523.47,  "supply_MW": 600.0, "imbalance_MW": 76.53,  "type": "OVER_SUPPLY"},
+      {"timestep": 4,  "demand_MW": 655.91,  "supply_MW": 600.0, "imbalance_MW": 55.91,  "type": "UNDER_SUPPLY"},
+      {"timestep": 5,  "demand_MW": 763.95,  "supply_MW": 600.0, "imbalance_MW": 163.95, "type": "UNDER_SUPPLY"},
+      {"timestep": 6,  "demand_MW": 817.13,  "supply_MW": 600.0, "imbalance_MW": 217.13, "type": "UNDER_SUPPLY"},
+      {"timestep": 7,  "demand_MW": 898.42,  "supply_MW": 600.0, "imbalance_MW": 298.42, "type": "UNDER_SUPPLY"},
+      {"timestep": 8,  "demand_MW": 955.77,  "supply_MW": 600.0, "imbalance_MW": 355.77, "type": "UNDER_SUPPLY"},
+      {"timestep": 9,  "demand_MW": 984.21,  "supply_MW": 600.0, "imbalance_MW": 384.21, "type": "UNDER_SUPPLY"},
+      {"timestep": 10, "demand_MW": 961.08,  "supply_MW": 600.0, "imbalance_MW": 361.08, "type": "UNDER_SUPPLY"},
+      {"timestep": 11, "demand_MW": 920.44,  "supply_MW": 600.0, "imbalance_MW": 320.44, "type": "UNDER_SUPPLY"},
+      {"timestep": 12, "demand_MW": 881.55,  "supply_MW": 600.0, "imbalance_MW": 281.55, "type": "UNDER_SUPPLY"},
+      {"timestep": 13, "demand_MW": 851.32,  "supply_MW": 600.0, "imbalance_MW": 251.32, "type": "UNDER_SUPPLY"},
+      {"timestep": 14, "demand_MW": 845.67,  "supply_MW": 600.0, "imbalance_MW": 245.67, "type": "UNDER_SUPPLY"},
+      {"timestep": 15, "demand_MW": 880.19,  "supply_MW": 600.0, "imbalance_MW": 280.19, "type": "UNDER_SUPPLY"},
+      {"timestep": 16, "demand_MW": 944.81,  "supply_MW": 600.0, "imbalance_MW": 344.81, "type": "UNDER_SUPPLY"},
+      {"timestep": 17, "demand_MW": 1008.55, "supply_MW": 600.0, "imbalance_MW": 408.55, "type": "UNDER_SUPPLY"},
+      {"timestep": 18, "demand_MW": 979.66,  "supply_MW": 600.0, "imbalance_MW": 379.66, "type": "UNDER_SUPPLY"},
+      {"timestep": 19, "demand_MW": 905.12,  "supply_MW": 600.0, "imbalance_MW": 305.12, "type": "UNDER_SUPPLY"},
+      {"timestep": 20, "demand_MW": 813.91,  "supply_MW": 600.0, "imbalance_MW": 213.91, "type": "UNDER_SUPPLY"},
+      {"timestep": 21, "demand_MW": 706.64,  "supply_MW": 600.0, "imbalance_MW": 106.64, "type": "UNDER_SUPPLY"},
+      {"timestep": 22, "demand_MW": 594.93,  "supply_MW": 600.0, "imbalance_MW": 5.07,   "type": "OVER_SUPPLY"},
+      {"timestep": 23, "demand_MW": 530.16,  "supply_MW": 600.0, "imbalance_MW": 69.84,  "type": "OVER_SUPPLY"}
+    ],
+    "total_violations": 24,
+    "under_supply_count": 18,
+    "over_supply_count": 6,
+    "max_imbalance_MW": 408.55,
+    "max_imbalance_timestep": 17,
+    "pct_timesteps_violated": 100.0,
+    "status": "ANOMALY",
+    "root_cause": "solar_1 and wind_1 dispatch columns are all zeros despite both generators being in the fleet, and gas_cc_1 runs flat at P_max (600 MW) all 24 hours with no load-following. The most likely cause is a solution parsing error: VRE generator columns may have been silently dropped or zeroed during dispatch CSV extraction, and gas_cc_1 commitment may have been read without its dispatch values. The resulting flat 600 MW profile causes over-supply in off-peak hours (t=0-3, t=22-23) and large unserved demand at peak hours (t=4-21, max 408.55 MW at t=17). Other possible causes: unit index mismatch in the .sol file, or a column ordering bug in the CSV writer."
+  },
+  "dispatch_bounds": {
+    "below_pmin_events": [],
+    "above_pmax_events": [],
+    "zero_generation_generators": [
+      {"generator": "solar_1", "note": "Zero output all 24 hours despite 650 MW capacity and summer profile — parsing error"},
+      {"generator": "wind_1",  "note": "Zero output all 24 hours despite 900 MW capacity — parsing error"}
+    ],
+    "status": "ANOMALY"
+  },
+  "ramp_rates": {
+    "ramp_violations": [],
+    "status": "OK",
+    "note": "gas_cc_1 is constant at 600 MW — no ramp events."
+  },
+  "cost_analysis": {
+    "objective_value_USD": 148200.0,
+    "cost_per_MWh_avg": 7.90,
+    "benchmark_low_USD_per_MWh": 7.90,
+    "benchmark_high_USD_per_MWh": 94.08,
+    "computed_variable_cost_USD": 300672.0,
+    "anomalies": [
+      {
+        "type": "COST_DISCREPANCY",
+        "message": "Reported objective $148,200 does not match recomputed variable cost $300,672 (gas_cc_1 at 600 MW × $20.80/MWh × 24h = $300,672). Discrepancy 103% — the reported objective reflects only partial thermal dispatch from the corrupted solution file (VRE zeroed, load balance not enforced).",
+        "severity": "ANOMALY"
+      }
+    ],
+    "status": "ANOMALY"
+  },
+  "emission_analysis": {
+    "total_tCO2": 5040.0,
+    "cap_tCO2": 5000,
+    "slack_pct": -0.8,
+    "computation": "gas_cc_1: 600 MW × 0.35 tCO2/MWh × 24h = 5,040 tCO2",
+    "anomalies": [
+      {
+        "type": "EMISSION_CAP_EXCEEDED",
+        "message": "Total emissions 5,040 tCO2 exceed the cap of 5,000 tCO2 by 40 tCO2 (0.8%). gas_cc_1 at flat 600 MW for 24h produces 5,040 tCO2. If VRE had been correctly dispatched, thermal output and emissions would have been lower (expected: ~2,752 tCO2 with correct VRE dispatch).",
+        "severity": "ANOMALY"
+      }
+    ],
+    "status": "ANOMALY"
+  },
+  "renewable_analysis": {
+    "fraction_achieved": 0.0,
+    "target": 0.60,
+    "target_met": false,
+    "anomalies": [
+      {
+        "type": "RENEWABLE_TARGET_MISSED",
+        "message": "Renewable fraction 0.0% is far below the required target of 60.0%. solar_1 and wind_1 dispatch are both zero across all 24 timesteps due to the parsing error. With correct VRE dispatch, expected renewable fraction is ~62%.",
+        "severity": "ANOMALY"
+      }
+    ],
+    "status": "ANOMALY"
+  },
+  "load_shedding": {
+    "total_MWh": 0.0,
+    "shed_pct_of_demand": 0.0,
+    "periods": [],
+    "anomalies": [
+      {
+        "type": "IMPLICIT_UNSERVED_DEMAND",
+        "message": "load_shedding_MW=0 at all timesteps, but power balance analysis shows 18 timesteps (t=4–21) with supply < demand (unserved demand max 408.55 MW at t=17). The physical load shortfall is not recorded in the dispatch output — it is implicit in the power balance violation.",
+        "severity": "ANOMALY"
+      }
+    ],
+    "status": "ANOMALY"
+  },
+  "all_anomalies": [
+    "POWER_BALANCE: All 24 timesteps have |supply - demand| > 0.5 MW. 18 timesteps have under-supply (unserved demand, max 408.55 MW at t=17). Root cause: VRE dispatch columns zeroed in parsing.",
+    "DISPATCH_BOUNDS: solar_1 and wind_1 show zero output all 24 hours — VRE dispatch was dropped during solution parsing.",
+    "COST_DISCREPANCY: Reported objective $148,200 vs recomputed $300,672 (103% gap).",
+    "EMISSION_CAP_EXCEEDED: 5,040 tCO2 vs 5,000 tCO2 cap (0.8% over). Caused by flat thermal dispatch without VRE offset.",
+    "RENEWABLE_TARGET_MISSED: 0% renewable fraction vs 60% target. VRE data missing from dispatch."
+  ],
+  "recommendations": [
+    "CRITICAL: Do not use this solution. Re-parse the solver .sol file with verbose column logging to recover solar_1 and wind_1 dispatch timeseries.",
+    "Route to Refiner Agent with OUTPUT_ANOMALY context, trigger: POWER_BALANCE_VIOLATION.",
+    "Check dispatch CSV extraction logic: verify all generator columns are written. VRE generators may be missing from the column index if they use always-on commitment (no binary u[g,t] variable) that differs from thermal generators.",
+    "Once VRE parsing is fixed and the dispatch is regenerated, emission cap and renewable target violations are expected to resolve automatically.",
+    "After fix: re-run check_power_balance.py and validate all 24 timesteps balance within 0.5 MW tolerance before accepting the solution."
+  ]
+}

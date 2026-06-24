@@ -1,0 +1,33 @@
+Use the scenario_builder skill.
+
+I want to create a solver-ready scenario configuration for the following scenario.
+
+Model context:
+- This is a greenfield electricity generation capacity expansion model.
+- The model minimizes total fixed cost, variable generation cost, and non-served energy penalty.
+- Candidate resources for the first test should include only thermal generators: Geothermal, Coal, CCGT, and CT.
+- Demand is hourly demand for 8,760 hours.
+- Non-served energy is allowed but penalized.
+- NSECost = 9000 $/MWh.
+- Solver: HiGHS.
+- Language/modeling stack: Julia + JuMP.
+- Input files:
+  - expansion_data/generators_for_expansion.csv
+  - expansion_data/demand_for_expansion.csv
+- Do not include wind and solar in this first scenario.
+
+Create a structured scenario config in YAML or JSON. The config should include:
+1. scenario_id
+2. model_type
+3. objective description
+4. sets
+5. input data files
+6. candidate generator filter
+7. key parameters
+8. decision variables
+9. constraints
+10. solver settings
+11. expected output files
+12. validation checks to run after solving
+
+Make the output domain-specific to energy system capacity expansion, not a generic optimization config.

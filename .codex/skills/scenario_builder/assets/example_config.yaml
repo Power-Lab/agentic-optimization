@@ -1,0 +1,77 @@
+run_id: run_id_001
+created_at: '2024-01-01T08:00:00Z'
+scenario_name: scenario_run_id_001
+source_request: Minimize cost for ERCOT 24h horizon with 60% renewables and 5000 tCO2
+  cap
+region: ERCOT
+model_type: unit_commitment
+time_horizon:
+  start: '2024-01-01T00:00:00Z'
+  end: '2024-01-02T00:00:00Z'
+  resolution_minutes: 60
+  T: 24
+  dt_h: 1.0
+demand_assumptions:
+  peak_MW: 1100
+  profile: synthetic_typical_day
+  growth_rate_pct: 0.0
+renewable_assumptions:
+  solar_capacity_MW: 650
+  wind_capacity_MW: 900
+  solar_cf_profile: synthetic_summer
+  wind_cf_profile: synthetic_moderate
+generators:
+- id: gas_cc_1
+  type: gas_combined_cycle
+  capacity_MW: 600
+  P_min_MW: 180
+  heat_rate_MMBtu_per_MWh: 6.5
+  fuel_cost_USD_per_MMBtu: 3.2
+  cost_linear_USD_per_MWh: 20.8
+  cost_fixed_USD_per_h: 850
+  startup_cost_USD: 12000
+  min_up_time_h: 4
+  min_down_time_h: 4
+  ramp_up_MW_h: 480
+  ramp_down_MW_h: 480
+  emission_rate_tCO2_per_MWh: 0.35
+- id: gas_ct_1
+  type: gas_combustion_turbine
+  capacity_MW: 200
+  P_min_MW: 40
+  heat_rate_MMBtu_per_MWh: 9.8
+  fuel_cost_USD_per_MMBtu: 3.2
+  cost_linear_USD_per_MWh: 31.36
+  cost_fixed_USD_per_h: 300
+  startup_cost_USD: 3000
+  min_up_time_h: 1
+  min_down_time_h: 1
+  ramp_up_MW_h: 200
+  ramp_down_MW_h: 200
+  emission_rate_tCO2_per_MWh: 0.55
+- id: solar_1
+  type: solar
+  capacity_MW: 650
+  cost_linear_USD_per_MWh: 0.0
+  emission_rate_tCO2_per_MWh: 0.0
+- id: wind_1
+  type: wind
+  capacity_MW: 900
+  cost_linear_USD_per_MWh: 0.0
+  emission_rate_tCO2_per_MWh: 0.0
+policy_constraints:
+  emission_cap_tCO2: 5000
+  renewable_penetration_min: 0.6
+  spinning_reserve_pct: 0.05
+  non_spinning_reserve_pct: 0.03
+  network_model: single_bus
+solver_settings:
+  mip_gap: 0.001
+  time_limit_s: 600
+  warm_start: false
+  binary_commitment: true
+  load_shedding_penalty_USD_per_MWh: 10000
+refinement_overrides: {}
+iteration_history_ref: null
+validation_status: PASS
+validation_warnings: []

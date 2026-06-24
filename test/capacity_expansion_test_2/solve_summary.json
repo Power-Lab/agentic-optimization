@@ -1,0 +1,18 @@
+{
+  "candidate_generators": [
+    "Geo",
+    "Coal",
+    "CCGT",
+    "CT"
+  ],
+  "hours": 8760,
+  "objective_value_usd": 9.908739787999374e8,
+  "peak_demand_mw": 4813.0,
+  "primal_status": "FEASIBLE_POINT",
+  "scenario_id": "capacity_expansion_test_2_thermal_greenfield",
+  "termination_status": "OPTIMAL",
+  "total_fixed_cost_usd": 3.5535272e8,
+  "total_nse_mwh": 637.0,
+  "total_nse_penalty_usd": 5.733e6,
+  "total_variable_cost_usd": 6.297882588000108e8
+}

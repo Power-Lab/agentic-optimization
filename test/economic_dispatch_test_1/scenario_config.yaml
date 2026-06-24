@@ -1,0 +1,342 @@
+scenario_id: "economic_dispatch_test_1_single_bus"
+created_at: "2026-06-22T00:00:00-07:00"
+scenario_name: "single_bus_economic_dispatch_full_horizon"
+source_request: "Build a solver-ready YAML scenario config for a single-bus economic dispatch model using all hourly demand data and generator, fuel, and renewable availability inputs from test/economic_dispatch_test_1/ed_data."
+
+model:
+  model_type: "economic_dispatch"
+  formulation_class: "linear_program"
+  modeling_stack:
+    language: "Julia"
+    package: "JuMP"
+    solver: "HiGHS"
+    optimizer_constructor: "HiGHS.Optimizer"
+  network_representation: "single_bus"
+  unit_commitment: false
+  storage: false
+  transmission: false
+  dispatchable_capacity_is_fixed: true
+
+objective:
+  sense: "minimize"
+  description: "Minimize total operating cost over the full hourly demand horizon."
+  expression: "sum(g in G, h in H, (VarOM[g] + HeatRate[g] * FuelCost[Fuel[g]]) * GEN[g,h] * dt) + sum(h in H, NSECost * NSE[h])"
+  terms:
+    variable_om_cost:
+      variable: "GEN[g,h]"
+      parameter: "VarOM[g]"
+      source_file: "test/economic_dispatch_test_1/ed_data/Generators_data.csv"
+      source_column: "Var_OM_cost_per_MWh"
+      units: "USD/MWh"
+    fuel_cost:
+      variable: "GEN[g,h]"
+      parameter_expression: "HeatRate[g] * FuelCost[Fuel[g]]"
+      heat_rate_source_file: "test/economic_dispatch_test_1/ed_data/Generators_data.csv"
+      heat_rate_source_column: "Heat_rate_MMBTU_per_MWh"
+      fuel_cost_source_file: "test/economic_dispatch_test_1/ed_data/Fuels_data.csv"
+      fuel_cost_source_column: "Cost_per_MMBtu"
+      units: "USD/MWh"
+    non_served_energy_penalty:
+      variable: "NSE[h]"
+      parameter: "NSECost"
+      units: "USD/MWh"
+
+sets:
+  G:
+    description: "All generator/resource rows from the generator input file."
+    source_file: "test/economic_dispatch_test_1/ed_data/Generators_data.csv"
+    source_column: "R_ID"
+    expected_count: 34
+    generator_id_expression: "string(R_ID)"
+    include_existing_capacity_zero_resources: true
+  H:
+    description: "Full available hourly demand horizon."
+    source_file: "test/economic_dispatch_test_1/ed_data/Demand.csv"
+    source_column: "Hour"
+    expected_count: 8760
+    start_hour: 1
+    end_hour: 8760
+    resolution_hours: 1.0
+  F:
+    description: "Fuel price and carbon content lookup table."
+    source_file: "test/economic_dispatch_test_1/ed_data/Fuels_data.csv"
+    source_column: "Fuel"
+
+input_data_files:
+  generators:
+    path: "test/economic_dispatch_test_1/ed_data/Generators_data.csv"
+    format: "csv"
+    required: true
+    required_columns:
+      - "R_ID"
+      - "Resource"
+      - "region"
+      - "Existing_Cap_MW"
+      - "Var_OM_cost_per_MWh"
+      - "Fuel"
+      - "Heat_rate_MMBTU_per_MWh"
+      - "cluster"
+      - "DISP"
+      - "NDISP"
+      - "STOR"
+  demand:
+    path: "test/economic_dispatch_test_1/ed_data/Demand.csv"
+    format: "csv"
+    required: true
+    required_columns:
+      - "Hour"
+      - "Demand"
+  fuels:
+    path: "test/economic_dispatch_test_1/ed_data/Fuels_data.csv"
+    format: "csv"
+    required: true
+    required_columns:
+      - "Fuel"
+      - "Cost_per_MMBtu"
+      - "CO2_content_tons_per_MMBtu"
+  generator_availability:
+    path: "test/economic_dispatch_test_1/ed_data/Generators_variability.csv"
+    format: "csv"
+    required: true
+    required_columns:
+      - "Hour"
+    generator_profile_column_expression: "region + '_' + Resource + '_' + string(cluster) + '.0'"
+    missing_dispatchable_profile_default: 1.0
+    interpretation: "Hourly capacity factor or availability multiplier by generator/resource row when a matching profile column exists; dispatchable thermal rows without a matching profile column use availability 1.0."
+
+time_horizon:
+  source: "Demand.csv"
+  use_full_available_horizon: true
+  resolution_minutes: 60
+  T: 8760
+  dt_h: 1.0
+  hour_index:
+    source_file: "test/economic_dispatch_test_1/ed_data/Demand.csv"
+    source_column: "Hour"
+    first: 1
+    last: 8760
+
+parameters:
+  demand:
+    symbol: "Demand[h]"
+    source_file: "test/economic_dispatch_test_1/ed_data/Demand.csv"
+    source_column: "Demand"
+    units: "MW"
+    statistics:
+      records: 8760
+      min_MW: 1306
+      max_MW: 4813
+      total_MWh: 22567897
+  capacity:
+    symbol: "PMaxNameplate[g]"
+    source_file: "test/economic_dispatch_test_1/ed_data/Generators_data.csv"
+    source_column: "Existing_Cap_MW"
+    units: "MW"
+  variable_om_cost:
+    symbol: "VarOM[g]"
+    source_file: "test/economic_dispatch_test_1/ed_data/Generators_data.csv"
+    source_column: "Var_OM_cost_per_MWh"
+    units: "USD/MWh"
+  fuel:
+    symbol: "Fuel[g]"
+    source_file: "test/economic_dispatch_test_1/ed_data/Generators_data.csv"
+    source_column: "Fuel"
+  heat_rate:
+    symbol: "HeatRate[g]"
+    source_file: "test/economic_dispatch_test_1/ed_data/Generators_data.csv"
+    source_column: "Heat_rate_MMBTU_per_MWh"
+    units: "MMBtu/MWh"
+  fuel_cost:
+    symbol: "FuelCost[f]"
+    source_file: "test/economic_dispatch_test_1/ed_data/Fuels_data.csv"
+    source_column: "Cost_per_MMBtu"
+    units: "USD/MMBtu"
+  co2_content:
+    symbol: "CO2Content[f]"
+    source_file: "test/economic_dispatch_test_1/ed_data/Fuels_data.csv"
+    source_column: "CO2_content_tons_per_MMBtu"
+    units: "tons/MMBtu"
+  operating_cost:
+    symbol: "OpCost[g]"
+    expression: "VarOM[g] + HeatRate[g] * FuelCost[Fuel[g]]"
+    units: "USD/MWh"
+    description: "Total variable dispatch cost including variable O&M and fuel cost. Fuel value 'None' maps to zero fuel cost in Fuels_data.csv."
+  availability:
+    symbol: "Avail[g,h]"
+    source_file: "test/economic_dispatch_test_1/ed_data/Generators_variability.csv"
+    source_column_expression: "region + '_' + Resource + '_' + string(cluster) + '.0'"
+    fallback_expression: "1.0 if no matching availability column exists and Resource is dispatchable thermal; otherwise fail validation"
+    units: "fraction"
+    applies_to: "all generators"
+  hourly_available_capacity:
+    symbol: "PMax[g,h]"
+    expression: "PMaxNameplate[g] * Avail[g,h]"
+    units: "MW"
+  non_served_energy_cost:
+    symbol: "NSECost"
+    value: 10000.0
+    units: "USD/MWh"
+    description: "High penalty used only to preserve solve feasibility if input capacity is insufficient in any hour."
+  timestep_hours:
+    symbol: "dt"
+    value: 1.0
+    units: "hours"
+
+renewable_availability_profiles:
+  source_file: "test/economic_dispatch_test_1/ed_data/Generators_variability.csv"
+  profile_column_expression: "region + '_' + Resource + '_' + string(cluster) + '.0'"
+  renewable_resource_filters:
+    - "DISP == 1"
+    - "Resource contains 'wind'"
+    - "Resource contains 'solar'"
+  included_examples:
+    - "WEC_SDGE_onshore_wind_turbine_1.0"
+    - "WEC_SDGE_solar_photovoltaic_1.0"
+    - "WEC_SDGE_landbasedwind_ltrg1_1.0"
+    - "WEC_SDGE_landbasedwind_ltrg1_2.0"
+    - "WEC_SDGE_utilitypv_losangeles_1.0"
+    - "WEC_SDGE_utilitypv_losangeles_2.0"
+
+decision_variables:
+  GEN:
+    index: ["G", "H"]
+    domain: "NonNegativeReals"
+    units: "MWh"
+    description: "Hourly generation from each generator/resource row."
+  NSE:
+    index: ["H"]
+    domain: "NonNegativeReals"
+    units: "MWh"
+    description: "Non-served energy slack, penalized at NSECost."
+
+constraints:
+  demand_balance:
+    index: ["H"]
+    expression: "sum(g in G, GEN[g,h]) + NSE[h] == Demand[h] * dt"
+    description: "Each hour's energy demand must be met by generation or non-served energy."
+  generation_capacity:
+    index: ["G", "H"]
+    expression: "GEN[g,h] <= PMaxNameplate[g] * Avail[g,h] * dt"
+    description: "Hourly generation cannot exceed nameplate capacity times hourly availability."
+  nonnegative_generation:
+    index: ["G", "H"]
+    expression: "GEN[g,h] >= 0"
+  nonnegative_non_served_energy:
+    index: ["H"]
+    expression: "NSE[h] >= 0"
+
+solver_settings:
+  solver_name: "HiGHS"
+  optimizer_constructor: "HiGHS.Optimizer"
+  model_sense: "Min"
+  time_limit_seconds: 600
+  presolve: "on"
+  log_to_console: true
+  log_file: "test/economic_dispatch_test_1/highs_economic_dispatch.log"
+  options:
+    primal_feasibility_tolerance: 1.0e-7
+    dual_feasibility_tolerance: 1.0e-7
+  expected_statuses:
+    - "OPTIMAL"
+
+julia_jump_implementation_hints:
+  packages:
+    - "CSV"
+    - "DataFrames"
+    - "JuMP"
+    - "HiGHS"
+    - "JSON"
+  set_construction:
+    G: "generators.R_ID"
+    H: "demand.Hour"
+    F: "fuels.Fuel"
+  data_preparation:
+    - "Build generator_profile_col[g] = generators.region[g] * '_' * generators.Resource[g] * '_' * string(generators.cluster[g]) * '.0'."
+    - "If generator_profile_col[g] is absent for a dispatchable thermal resource, set availability[g,h] = 1.0 for all h."
+    - "Join generator Fuel values to Fuels_data.csv, with Fuel == 'None' using Cost_per_MMBtu = 0."
+    - "Compute OpCost[g] = Var_OM_cost_per_MWh[g] + Heat_rate_MMBTU_per_MWh[g] * Cost_per_MMBtu[Fuel[g]]."
+    - "Use all rows in Demand.csv; do not truncate or sample the horizon."
+  variable_declarations:
+    - "@variable(model, GEN[g in G, h in H] >= 0)"
+    - "@variable(model, NSE[h in H] >= 0)"
+  constraint_declarations:
+    - "@constraint(model, cDemandBalance[h in H], sum(GEN[g,h] for g in G) + NSE[h] == demand_by_hour[h] * dt)"
+    - "@constraint(model, cGenerationCapacity[g in G, h in H], GEN[g,h] <= capacity[g] * availability[g,h] * dt)"
+  objective_declaration: "@objective(model, Min, sum(op_cost[g] * GEN[g,h] for g in G, h in H) + sum(NSECost * NSE[h] for h in H))"
+
+expected_output_files:
+  hourly_dispatch:
+    path: "test/economic_dispatch_test_1/hourly_dispatch.csv"
+    fields:
+      - "Hour"
+      - "R_ID"
+      - "Resource"
+      - "generation_mwh"
+      - "available_capacity_mw"
+      - "operating_cost_usd"
+  non_served_energy:
+    path: "test/economic_dispatch_test_1/non_served_energy.csv"
+    fields:
+      - "Hour"
+      - "nse_mwh"
+      - "nse_penalty_usd"
+  solve_summary:
+    path: "test/economic_dispatch_test_1/solve_summary.json"
+    fields:
+      - "scenario_id"
+      - "termination_status"
+      - "objective_value_usd"
+      - "total_operating_cost_usd"
+      - "total_nse_mwh"
+      - "peak_demand_mw"
+      - "total_generation_mwh"
+
+validation_checks:
+  pre_solve:
+    - id: "input_files_exist"
+      severity: "FAIL"
+      status: "PASS"
+      check: "Confirmed all configured input CSV paths exist."
+      referenced_paths:
+        - "test/economic_dispatch_test_1/ed_data/Generators_data.csv"
+        - "test/economic_dispatch_test_1/ed_data/Demand.csv"
+        - "test/economic_dispatch_test_1/ed_data/Fuels_data.csv"
+        - "test/economic_dispatch_test_1/ed_data/Generators_variability.csv"
+    - id: "demand_full_horizon"
+      severity: "FAIL"
+      status: "PASS"
+      check: "Demand.csv contains exactly 8760 hourly records with Hour spanning 1 to 8760."
+    - id: "generator_columns_present"
+      severity: "FAIL"
+      check: "Confirm Generators_data.csv includes R_ID, Resource, region, Existing_Cap_MW, Var_OM_cost_per_MWh, Fuel, Heat_rate_MMBTU_per_MWh, and cluster."
+    - id: "fuel_columns_present"
+      severity: "FAIL"
+      check: "Confirm Fuels_data.csv includes Fuel, Cost_per_MMBtu, and CO2_content_tons_per_MMBtu."
+    - id: "availability_columns_present"
+      severity: "FAIL"
+      check: "For every renewable, storage, hydro, or non-dispatchable generator row requiring an hourly profile, confirm Generators_variability.csv includes region + '_' + Resource + '_' + cluster + '.0'; dispatchable thermal rows without profile columns default to availability 1.0."
+    - id: "fuel_lookup_complete"
+      severity: "FAIL"
+      check: "Every Fuel value in Generators_data.csv must appear in Fuels_data.csv."
+    - id: "capacity_and_cost_numeric"
+      severity: "FAIL"
+      check: "Existing_Cap_MW, Var_OM_cost_per_MWh, Heat_rate_MMBTU_per_MWh, and Cost_per_MMBtu must parse as numeric values."
+  post_solve:
+    - id: "accepted_solver_status"
+      severity: "FAIL"
+      check: "Confirm HiGHS reports OPTIMAL."
+    - id: "demand_balance_residual"
+      severity: "FAIL"
+      check: "For every hour, abs(sum(GEN[g,h]) + NSE[h] - Demand[h]) <= 1e-5."
+    - id: "capacity_constraint_residual"
+      severity: "FAIL"
+      check: "For every generator-hour, GEN[g,h] <= Existing_Cap_MW[g] * Avail[g,h] + 1e-5."
+    - id: "nonnegative_outputs"
+      severity: "FAIL"
+      check: "GEN and NSE outputs are nonnegative within tolerance."
+    - id: "cost_components_sum_to_objective"
+      severity: "FAIL"
+      check: "Total variable O&M cost, fuel cost, and NSE penalty sum to the reported objective within tolerance."
+
+validation_status: "PASS"
+validation_warnings: []

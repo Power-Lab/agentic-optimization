@@ -1,0 +1,7 @@
+Build a solver-ready YAML scenario config for a single-bus economic dispatch model. 
+Read the input files from test\economic_dispatch_test_1\ed_data.
+Set the objective to minimize total operating cost, use the full available hourly demand horizon, 
+include generator capacities, variable costs, fuel costs, and renewable 
+availability profiles from the data, and write the config under 
+test\economic_dispatch_test_1\scenario_config.yaml. 
+Validate that all referenced input paths exist.

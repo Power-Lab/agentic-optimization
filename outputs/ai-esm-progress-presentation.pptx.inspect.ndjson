@@ -1,0 +1,237 @@
+{"kind":"deck","id":"pr/60il59","name":"Deck"}
+{"kind":"layout","layoutId":"09da2954-de21-4460-bac5-c897b3854934","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"d0d2b90c-fd0c-484f-955d-4d1cd32809ab","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/armcch","slide":1,"title":"AI-Assisted Energy System Modeling","textShapes":13}
+{"kind":"textbox","id":"sh/epkzupwb","slide":1,"text":"AI-Assisted Energy System Modeling","textPreview":"AI-Assisted Energy System Modeling","textChars":34,"textLines":1,"bbox":[64,92,760,138]}
+{"kind":"textbox","id":"sh/pg3ex0nu","slide":1,"text":"Progress update for Michael and research collaborators","textPreview":"Progress update for Michael and research collaborators","textChars":54,"textLines":1,"bbox":[68,246,600,42]}
+{"kind":"textbox","id":"sh/wval87ed","slide":1,"text":"AI-ESM project","textPreview":"AI-ESM project","textChars":14,"textLines":1,"bbox":[68,316,150,34]}
+{"kind":"textbox","id":"sh/7mp0bi9s","slide":1,"text":"Codex skills","textPreview":"Codex skills","textChars":12,"textLines":1,"bbox":[236,316,140,34]}
+{"kind":"textbox","id":"sh/e1w7mp0b","slide":1,"text":"MVP orchestration","textPreview":"MVP orchestration","textChars":17,"textLines":1,"bbox":[394,316,170,34]}
+{"kind":"textbox","id":"sh/psfil0rq","slide":1,"text":"Intent","textPreview":"Intent","textChars":6,"textLines":1,"bbox":[760,104,150,66]}
+{"kind":"textbox","id":"sh/w7mp0bi9","slide":1,"text":"Skills","textPreview":"Skills","textChars":6,"textLines":1,"bbox":[948,104,150,66]}
+{"kind":"textbox","id":"sh/7u54zido","slide":1,"text":"Solver run","textPreview":"Solver run","textChars":10,"textLines":1,"bbox":[854,224,150,66]}
+{"kind":"textbox","id":"sh/ed8bat47","slide":1,"text":"Diagnostics","textPreview":"Diagnostics","textChars":11,"textLines":1,"bbox":[760,344,150,66]}
+{"kind":"textbox","id":"sh/onyd0z61","slide":1,"text":"Refinement","textPreview":"Refinement","textChars":10,"textLines":1,"bbox":[948,344,150,66]}
+{"kind":"textbox","id":"sh/d8v6psfi","slide":1,"text":"Layered agent workflow for repeatable scenario design, execution, analysis, and refinement.","textPreview":"Layered agent workflow for repeatable scenario design, execution, analysis, and refinement.","textChars":91,"textLines":1,"bbox":[760,474,410,84]}
+{"kind":"textbox","id":"sh/6hcrmhk3","slide":1,"text":"Progress deck","textPreview":"Progress deck","textChars":13,"textLines":1,"bbox":[64,674,360,22]}
+{"kind":"textbox","id":"sh/z25kb6xk","slide":1,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[1180,674,40,22]}
+{"kind":"shape","id":"sh/ovahoza1","slide":1,"bbox":[64,658,1152,1]}
+{"kind":"notes","id":"nt/armcch","slide":1,"text":""}
+{"kind":"slide","id":"sl/oyyz12","slide":2,"title":"DISCUSSION PATH","textShapes":21}
+{"kind":"textbox","id":"sh/ap4r65wj","slide":2,"text":"DISCUSSION PATH","textPreview":"DISCUSSION PATH","textChars":15,"textLines":1,"bbox":[64,52,540,22]}
+{"kind":"textbox","id":"sh/hgn29gr2","slide":2,"text":"A progress deck built around the working AI-ESM workflow","textPreview":"A progress deck built around the working AI-ESM workflow","textChars":56,"textLines":1,"bbox":[64,84,960,102]}
+{"kind":"textbox","id":"sh/svu9knih","slide":2,"text":"The goal is to show scope, reusable skills, current app behavior, and what needs research/design decisions next.","textPreview":"The goal is to show scope, reusable skills, current app behavior, and what needs research/design decisions next.","textChars":112,"textLines":1,"bbox":[64,184,980,46]}
+{"kind":"textbox","id":"sh/zidonyd0","slide":2,"text":"AI-ESM progress","textPreview":"AI-ESM progress","textChars":15,"textLines":1,"bbox":[64,674,360,22]}
+{"kind":"textbox","id":"sh/a1gvy90j","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1180,674,40,22]}
+{"kind":"shape","id":"sh/hoza1gvy","slide":2,"bbox":[64,658,1152,1]}
+{"kind":"textbox","id":"sh/s36hcrmh","slide":2,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[72,240,58,44]}
+{"kind":"textbox","id":"sh/3m94fu18","slide":2,"text":"Project scope","textPreview":"Project scope","textChars":13,"textLines":1,"bbox":[154,238,260,30]}
+{"kind":"textbox","id":"sh/a5gbq1or","slide":2,"text":"Problem, goal, and architecture layers","textPreview":"Problem, goal, and architecture layers","textChars":38,"textLines":1,"bbox":[154,270,760,26]}
+{"kind":"textbox","id":"sh/kf6dcbul","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[72,312,58,44]}
+{"kind":"textbox","id":"sh/d0z61032","slide":2,"text":"Agent skills","textPreview":"Agent skills","textChars":12,"textLines":1,"bbox":[154,310,260,30]}
+{"kind":"textbox","id":"sh/29gr2p8n","slide":2,"text":"What skills encode and why they matter","textPreview":"What skills encode and why they matter","textChars":38,"textLines":1,"bbox":[154,342,760,26]}
+{"kind":"textbox","id":"sh/vu9knih4","slide":2,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[72,384,58,44]}
+{"kind":"textbox","id":"sh/knih4byh","slide":2,"text":"AI-ESM workflow","textPreview":"AI-ESM workflow","textChars":15,"textLines":1,"bbox":[154,382,260,30]}
+{"kind":"textbox","id":"sh/d8bat47y","slide":2,"text":"How Codex uses the skills end to end","textPreview":"How Codex uses the skills end to end","textChars":36,"textLines":1,"bbox":[154,414,760,26]}
+{"kind":"textbox","id":"sh/2lszqtcj","slide":2,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[72,456,58,44]}
+{"kind":"textbox","id":"sh/v6psfil0","slide":2,"text":"App and code","textPreview":"App and code","textChars":12,"textLines":1,"bbox":[154,454,260,30]}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":2,"text":"Executable orchestration layer and usage","textPreview":"Executable orchestration layer and usage","textChars":40,"textLines":1,"bbox":[154,486,760,26]}
+{"kind":"textbox","id":"sh/dcbulwva","slide":2,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[72,528,58,44]}
+{"kind":"textbox","id":"sh/h0fepkzu","slide":2,"text":"Discussion","textPreview":"Discussion","textChars":10,"textLines":1,"bbox":[154,526,260,30]}
+{"kind":"textbox","id":"sh/sfil0rqd","slide":2,"text":"Limitations, open design choices, future work","textPreview":"Limitations, open design choices, future work","textChars":45,"textLines":1,"bbox":[154,558,760,26]}
+{"kind":"textbox","id":"sh/zupwb2hw","slide":2,"text":"Positioning\nThis is a progress-and-demo presentation, not a theory-only talk.","textPreview":"Positioning | This is a progress-and-demo presentation, not a theory-only talk.","textChars":77,"textLines":2,"bbox":[902,264,270,166]}
+{"kind":"notes","id":"nt/oyyz12","slide":2,"text":""}
+{"kind":"slide","id":"sl/074b3y","slide":3,"title":"PROJECT SCOPE","textShapes":12}
+{"kind":"textbox","id":"sh/rqd4vmtw","slide":3,"text":"PROJECT SCOPE","textPreview":"PROJECT SCOPE","textChars":13,"textLines":1,"bbox":[64,52,540,22]}
+{"kind":"textbox","id":"sh/kb6xkf6d","slide":3,"text":"AI-ESM turns modeling iteration into a guided research workflow","textPreview":"AI-ESM turns modeling iteration into a guided research workflow","textChars":63,"textLines":1,"bbox":[64,84,960,102]}
+{"kind":"textbox","id":"sh/9w3m94fu","slide":3,"text":"The MVP focuses on repeatability around scenario validation, solver execution, diagnostics, refinement, and memory.","textPreview":"The MVP focuses on repeatability around scenario validation, solver execution, diagnostics, refinement, and memory.","textChars":115,"textLines":1,"bbox":[64,184,980,46]}
+{"kind":"textbox","id":"sh/2t83itgf","slide":3,"text":"AI-ESM progress","textPreview":"AI-ESM progress","textChars":15,"textLines":1,"bbox":[64,674,360,22]}
+{"kind":"textbox","id":"sh/re1w7mp0","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1180,674,40,22]}
+{"kind":"shape","id":"sh/kzupwb2h","slide":3,"bbox":[64,658,1152,1]}
+{"kind":"textbox","id":"sh/9knih4by","slide":3,"text":"Pain point","textPreview":"Pain point","textChars":10,"textLines":1,"bbox":[78,250,316,64]}
+{"kind":"textbox","id":"sh/2p8nqxs7","slide":3,"text":"Energy modeling iteration is manual, brittle, and hard to audit.","textPreview":"Energy modeling iteration is manual, brittle, and hard to audit.","textChars":64,"textLines":1,"bbox":[96,332,282,92]}
+{"kind":"textbox","id":"sh/ra5gbq1o","slide":3,"text":"Project goal","textPreview":"Project goal","textChars":12,"textLines":1,"bbox":[458,250,316,64]}
+{"kind":"textbox","id":"sh/3m94fu18","slide":3,"text":"Use Codex plus domain skills to make model iteration more systematic.","textPreview":"Use Codex plus domain skills to make model iteration more systematic.","textChars":69,"textLines":1,"bbox":[476,332,282,92]}
+{"kind":"textbox","id":"sh/a5gbq1or","slide":3,"text":"Current MVP","textPreview":"Current MVP","textChars":11,"textLines":1,"bbox":[838,250,316,64]}
+{"kind":"textbox","id":"sh/lszqtcj6","slide":3,"text":"Wraps a capacity expansion runner with validation, execution, analysis, safe reruns, and run memory.","textPreview":"Wraps a capacity expansion runner with validation, execution, analysis, safe reruns, and run memory.","textChars":100,"textLines":1,"bbox":[856,332,282,92]}
+{"kind":"textbox","id":"sh/s72x4nap","slide":3,"text":"Boundary today: structural scenario edits, generator additions, demand changes, and policy relaxations remain recommendation-only until a broader patch approval workflow is added.","textPreview":"Boundary today: structural scenario edits, generator additions, demand changes, and policy relaxations remain recommendation-only until a...","textChars":179,"textLines":1,"bbox":[96,510,1040,58]}
+{"kind":"notes","id":"nt/074b3y","slide":3,"text":""}
+{"kind":"slide","id":"sl/u9kp1a","slide":4,"title":"ARCHITECTURE","textShapes":15}
+{"kind":"textbox","id":"sh/b2hwfyxo","slide":4,"text":"ARCHITECTURE","textPreview":"ARCHITECTURE","textChars":12,"textLines":1,"bbox":[64,52,540,22]}
+{"kind":"textbox","id":"sh/4nap4r65","slide":4,"text":"Layered design separates research intent from model execution mechanics","textPreview":"Layered design separates research intent from model execution mechanics","textChars":71,"textLines":1,"bbox":[64,84,960,102]}
+{"kind":"textbox","id":"sh/t83itgfm","slide":4,"text":"Each layer has a clear contract, which makes the workflow easier to validate and extend.","textPreview":"Each layer has a clear contract, which makes the workflow easier to validate and extend.","textChars":88,"textLines":1,"bbox":[64,184,980,46]}
+{"kind":"textbox","id":"sh/m58z25kb","slide":4,"text":"AI-ESM progress","textPreview":"AI-ESM progress","textChars":15,"textLines":1,"bbox":[64,674,360,22]}
+{"kind":"textbox","id":"sh/bq1oryts","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1180,674,40,22]}
+{"kind":"shape","id":"sh/4byhgn29","slide":4,"bbox":[64,658,1152,1]}
+{"kind":"textbox","id":"sh/twra5gbq","slide":4,"text":"Research interface","textPreview":"Research interface","textChars":18,"textLines":1,"bbox":[92,210,270,50]}
+{"kind":"textbox","id":"sh/m1cfa9w3","slide":4,"text":"User goal, constraints, run budget, review decisions","textPreview":"User goal, constraints, run budget, review decisions","textChars":52,"textLines":1,"bbox":[382,210,760,50]}
+{"kind":"textbox","id":"sh/bm58z25k","slide":4,"text":"Codex orchestration","textPreview":"Codex orchestration","textChars":19,"textLines":1,"bbox":[92,288,270,50]}
+{"kind":"textbox","id":"sh/val87ed8","slide":4,"text":"Skill selection, file edits, tool calls, run coordination","textPreview":"Skill selection, file edits, tool calls, run coordination","textChars":57,"textLines":1,"bbox":[382,288,760,50]}
+{"kind":"textbox","id":"sh/6psfil0r","slide":4,"text":"Domain skills","textPreview":"Domain skills","textChars":13,"textLines":1,"bbox":[92,366,270,50]}
+{"kind":"textbox","id":"sh/dcbulwva","slide":4,"text":"Scenario builder, executor, log analyzer, output analyzer, refiner, memory","textPreview":"Scenario builder, executor, log analyzer, output analyzer, refiner, memory","textChars":74,"textLines":1,"bbox":[382,366,760,50]}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":4,"text":"Executable app","textPreview":"Executable app","textChars":14,"textLines":1,"bbox":[92,444,270,50]}
+{"kind":"textbox","id":"sh/vixczed8","slide":4,"text":"agent/orchestrator.py plus validation, analysis, patching, memory modules","textPreview":"agent/orchestrator.py plus validation, analysis, patching, memory modules","textChars":73,"textLines":1,"bbox":[382,444,760,50]}
+{"kind":"textbox","id":"sh/2x4nap4r","slide":4,"text":"Artifacts","textPreview":"Artifacts","textChars":9,"textLines":1,"bbox":[92,522,270,50]}
+{"kind":"textbox","id":"sh/donyd0z6","slide":4,"text":"YAML configs, solver logs, CSV outputs, run_state.json, run_history.jsonl","textPreview":"YAML configs, solver logs, CSV outputs, run_state.json, run_history.jsonl","textChars":73,"textLines":1,"bbox":[382,522,760,50]}
+{"kind":"notes","id":"nt/u9kp1a","slide":4,"text":""}
+{"kind":"slide","id":"sl/xyn6ni","slide":5,"title":"EXECUTABLE WORKFLOW","textShapes":20}
+{"kind":"textbox","id":"sh/szqtcj6t","slide":5,"text":"EXECUTABLE WORKFLOW","textPreview":"EXECUTABLE WORKFLOW","textChars":19,"textLines":1,"bbox":[64,52,540,22]}
+{"kind":"textbox","id":"sh/3ex0nuxc","slide":5,"text":"The current orchestration layer is deterministic and stateful","textPreview":"The current orchestration layer is deterministic and stateful","textChars":61,"textLines":1,"bbox":[64,84,960,102]}
+{"kind":"textbox","id":"sh/at47y1kr","slide":5,"text":"The agent records controller decisions and outputs into a stable run-state contract.","textPreview":"The agent records controller decisions and outputs into a stable run-state contract.","textChars":84,"textLines":1,"bbox":[64,184,980,46]}
+{"kind":"textbox","id":"sh/l87ed8ba","slide":5,"text":"AI-ESM progress","textPreview":"AI-ESM progress","textChars":15,"textLines":1,"bbox":[64,674,360,22]}
+{"kind":"textbox","id":"sh/sneloj2t","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1180,674,40,22]}
+{"kind":"shape","id":"sh/32lszqtc","slide":5,"bbox":[64,658,1152,1]}
+{"kind":"textbox","id":"sh/ahoza1gv","slide":5,"text":"VALIDATE\nSCENARIO","textPreview":"VALIDATE | SCENARIO","textChars":17,"textLines":2,"bbox":[70,260,132,82]}
+{"kind":"textbox","id":"sh/lwval87e","slide":5,"text":">","textPreview":">","textChars":1,"textLines":1,"bbox":[208,282,22,28]}
+{"kind":"textbox","id":"sh/wb2hwfyx","slide":5,"text":"LAUNCH\nSOLVER","textPreview":"LAUNCH | SOLVER","textChars":13,"textLines":2,"bbox":[235,260,132,82]}
+{"kind":"textbox","id":"sh/2lszqtcj","slide":5,"text":">","textPreview":">","textChars":1,"textLines":1,"bbox":[373,282,22,28]}
+{"kind":"textbox","id":"sh/v6psfil0","slide":5,"text":"ANALYZE\nSOLVER LOG","textPreview":"ANALYZE | SOLVER LOG","textChars":18,"textLines":2,"bbox":[400,260,132,82]}
+{"kind":"textbox","id":"sh/knih4byh","slide":5,"text":">","textPreview":">","textChars":1,"textLines":1,"bbox":[538,282,22,28]}
+{"kind":"textbox","id":"sh/d8bat47y","slide":5,"text":"ANALYZE\nOUTPUTS","textPreview":"ANALYZE | OUTPUTS","textChars":15,"textLines":2,"bbox":[565,260,132,82]}
+{"kind":"textbox","id":"sh/29gr2p8n","slide":5,"text":">","textPreview":">","textChars":1,"textLines":1,"bbox":[703,282,22,28]}
+{"kind":"textbox","id":"sh/vu9knih4","slide":5,"text":"TRIGGER\nREFINER","textPreview":"TRIGGER | REFINER","textChars":15,"textLines":2,"bbox":[730,260,132,82]}
+{"kind":"textbox","id":"sh/kf6dcbul","slide":5,"text":">","textPreview":">","textChars":1,"textLines":1,"bbox":[868,282,22,28]}
+{"kind":"textbox","id":"sh/d0z61032","slide":5,"text":"SAFE PATCH\nAND RERUN","textPreview":"SAFE PATCH | AND RERUN","textChars":20,"textLines":2,"bbox":[895,260,132,82]}
+{"kind":"textbox","id":"sh/2x4nap4r","slide":5,"text":">","textPreview":">","textChars":1,"textLines":1,"bbox":[1033,282,22,28]}
+{"kind":"textbox","id":"sh/vixczed8","slide":5,"text":"APPEND\nMEMORY","textPreview":"APPEND | MEMORY","textChars":13,"textLines":2,"bbox":[1060,260,132,82]}
+{"kind":"shape","id":"sh/neloj2t8","slide":5,"bbox":[92,438,8,8]}
+{"kind":"textbox","id":"sh/ytsvu9kn","slide":5,"text":"Run state: controller decisions, validation results, executor logs, solver diagnostics, output checks, refinement, patches, memory summary.","textPreview":"Run state: controller decisions, validation results, executor logs, solver diagnostics, output checks, refinement, patches, memory summary.","textChars":139,"textLines":1,"bbox":[112,430,1010,44]}
+{"kind":"shape","id":"sh/5kb6xkf6","slide":5,"bbox":[92,500,8,8]}
+{"kind":"textbox","id":"sh/czed8v6p","slide":5,"text":"Safe reruns are deliberately narrow: only selected solver_settings are patched automatically.","textPreview":"Safe reruns are deliberately narrow: only selected solver_settings are patched automatically.","textChars":93,"textLines":1,"bbox":[112,492,1010,44]}
+{"kind":"notes","id":"nt/xyn6ni","slide":5,"text":""}
+{"kind":"slide","id":"sl/i75gcv","slide":6,"title":"AGENT SKILLS","textShapes":12}
+{"kind":"textbox","id":"sh/x0nuxc3y","slide":6,"text":"AGENT SKILLS","textPreview":"AGENT SKILLS","textChars":12,"textLines":1,"bbox":[64,52,540,22]}
+{"kind":"textbox","id":"sh/m94fu18j","slide":6,"text":"Skills make Codex behavior reusable, domain-aware, and reviewable","textPreview":"Skills make Codex behavior reusable, domain-aware, and reviewable","textChars":65,"textLines":1,"bbox":[64,84,960,102]}
+{"kind":"textbox","id":"sh/fu18jqh0","slide":6,"text":"A skill is not just a prompt. It is an operating procedure with inputs, outputs, checks, and failure modes.","textPreview":"A skill is not just a prompt. It is an operating procedure with inputs, outputs, checks, and failure modes.","textChars":107,"textLines":1,"bbox":[64,184,980,46]}
+{"kind":"textbox","id":"sh/83itgfml","slide":6,"text":"AI-ESM progress","textPreview":"AI-ESM progress","textChars":15,"textLines":1,"bbox":[64,674,360,22]}
+{"kind":"textbox","id":"sh/xobm58z2","slide":6,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1180,674,40,22]}
+{"kind":"shape","id":"sh/qxs72x4n","slide":6,"bbox":[64,658,1152,1]}
+{"kind":"textbox","id":"sh/fil0rqd4","slide":6,"text":"What","textPreview":"What","textChars":4,"textLines":1,"bbox":[110,250,260,58]}
+{"kind":"textbox","id":"sh/4zidonyd","slide":6,"text":"Task-specific instructions, schemas, heuristics, references, scripts, and example assets.","textPreview":"Task-specific instructions, schemas, heuristics, references, scripts, and example assets.","textChars":89,"textLines":1,"bbox":[124,332,232,118]}
+{"kind":"textbox","id":"sh/xkf6dcbu","slide":6,"text":"How","textPreview":"How","textChars":3,"textLines":1,"bbox":[470,250,260,58]}
+{"kind":"textbox","id":"sh/1kre1w7m","slide":6,"text":"Codex reads the relevant SKILL.md, follows the workflow, then edits or analyzes local artifacts.","textPreview":"Codex reads the relevant SKILL.md, follows the workflow, then edits or analyzes local artifacts.","textChars":96,"textLines":1,"bbox":[484,332,232,118]}
+{"kind":"textbox","id":"sh/c3ylc7u5","slide":6,"text":"Why","textPreview":"Why","textChars":3,"textLines":1,"bbox":[830,250,260,58]}
+{"kind":"textbox","id":"sh/ji5snelo","slide":6,"text":"More consistent behavior, clearer provenance, and less one-off prompting for recurring modeling tasks.","textPreview":"More consistent behavior, clearer provenance, and less one-off prompting for recurring modeling tasks.","textChars":102,"textLines":1,"bbox":[844,332,232,118]}
+{"kind":"textbox","id":"sh/uxc3ylc7","slide":6,"text":"Standard folder pattern: SKILL.md + scripts/ + assets/ + references/","textPreview":"Standard folder pattern: SKILL.md + scripts/ + assets/ + references/","textChars":68,"textLines":1,"bbox":[250,540,780,54]}
+{"kind":"notes","id":"nt/i75gcv","slide":6,"text":""}
+{"kind":"slide","id":"sl/qh3t74","slide":7,"title":"AI-ESM SKILL MAP","textShapes":14}
+{"kind":"textbox","id":"sh/tovahoza","slide":7,"text":"AI-ESM SKILL MAP","textPreview":"AI-ESM SKILL MAP","textChars":16,"textLines":1,"bbox":[64,52,540,22]}
+{"kind":"textbox","id":"sh/ixczed8v","slide":7,"text":"The skill library covers the full optimization iteration loop","textPreview":"The skill library covers the full optimization iteration loop","textChars":61,"textLines":1,"bbox":[64,84,960,102]}
+{"kind":"textbox","id":"sh/bi9s36hc","slide":7,"text":"Each skill owns one capability but passes structured diagnostics to the next stage.","textPreview":"Each skill owns one capability but passes structured diagnostics to the next stage.","textChars":83,"textLines":1,"bbox":[64,184,980,46]}
+{"kind":"textbox","id":"sh/0fepkzup","slide":7,"text":"AI-ESM progress","textPreview":"AI-ESM progress","textChars":15,"textLines":1,"bbox":[64,674,360,22]}
+{"kind":"textbox","id":"sh/p0bi9s36","slide":7,"text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1180,674,40,22]}
+{"kind":"shape","id":"sh/i9s36hcr","slide":7,"bbox":[64,658,1152,1]}
+{"kind":"textbox","id":"sh/bulwval8","slide":7,"text":"code_generator\ncode / configs / HPC glue","textPreview":"code_generator | code / configs / HPC glue","textChars":40,"textLines":2,"bbox":[78,230,190,78]}
+{"kind":"textbox","id":"sh/0je9cvix","slide":7,"text":"scenario_builder\ngoals -> solver-ready YAML","textPreview":"scenario_builder | goals -> solver-ready YAML","textChars":43,"textLines":2,"bbox":[320,170,190,78]}
+{"kind":"textbox","id":"sh/t47y1kre","slide":7,"text":"supervisory_controller\nrouting + budgets","textPreview":"supervisory_controller | routing + budgets","textChars":40,"textLines":2,"bbox":[560,170,190,78]}
+{"kind":"textbox","id":"sh/9s36hcrm","slide":7,"text":"model_executor\nrun model / collect outputs","textPreview":"model_executor | run model / collect outputs","textChars":42,"textLines":2,"bbox":[800,170,190,78]}
+{"kind":"textbox","id":"sh/g7adsji5","slide":7,"text":"solver_log_analyzer\ninfeasibility + convergence","textPreview":"solver_log_analyzer | infeasibility + convergence","textChars":47,"textLines":2,"bbox":[320,330,190,78]}
+{"kind":"textbox","id":"sh/rmhk3q5o","slide":7,"text":"output_analysis_agent\nphysics + economics checks","textPreview":"output_analysis_agent | physics + economics checks","textChars":48,"textLines":2,"bbox":[560,330,190,78]}
+{"kind":"textbox","id":"sh/y1kre1w7","slide":7,"text":"refiner_agent\ntargeted fixes","textPreview":"refiner_agent | targeted fixes","textChars":28,"textLines":2,"bbox":[800,330,190,78]}
+{"kind":"textbox","id":"sh/90je9cvi","slide":7,"text":"iteration_memory\nhistory + failure patterns","textPreview":"iteration_memory | history + failure patterns","textChars":43,"textLines":2,"bbox":[560,500,190,78]}
+{"kind":"textbox","id":"sh/gfmlkjm1","slide":7,"text":"Structured handoffs keep the loop auditable: config -> run -> diagnostics -> recommendation -> patch/memory.","textPreview":"Structured handoffs keep the loop auditable: config -> run -> diagnostics -> recommendation -> patch/memory.","textChars":108,"textLines":1,"bbox":[120,612,980,30]}
+{"kind":"notes","id":"nt/qh3t74","slide":7,"text":""}
+{"kind":"slide","id":"sl/234o5v","slide":8,"title":"CODEX DEMONSTRATION","textShapes":15}
+{"kind":"textbox","id":"sh/tcj6tova","slide":8,"text":"CODEX DEMONSTRATION","textPreview":"CODEX DEMONSTRATION","textChars":19,"textLines":1,"bbox":[64,52,540,22]}
+{"kind":"textbox","id":"sh/il0rqd4v","slide":8,"text":"A researcher can drive the workflow through natural-language intent","textPreview":"A researcher can drive the workflow through natural-language intent","textChars":67,"textLines":1,"bbox":[64,84,960,102]}
+{"kind":"textbox","id":"sh/b6xkf6dc","slide":8,"text":"The useful demo is not a chatbot answer; it is Codex selecting skills and producing/verifying concrete artifacts.","textPreview":"The useful demo is not a chatbot answer; it is Codex selecting skills and producing/verifying concrete artifacts.","textChars":113,"textLines":1,"bbox":[64,184,980,46]}
+{"kind":"textbox","id":"sh/0je9cvix","slide":8,"text":"AI-ESM progress","textPreview":"AI-ESM progress","textChars":15,"textLines":1,"bbox":[64,674,360,22]}
+{"kind":"textbox","id":"sh/t47y1kre","slide":8,"text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1180,674,40,22]}
+{"kind":"shape","id":"sh/idonyd0z","slide":8,"bbox":[64,658,1152,1]}
+{"kind":"textbox","id":"sh/byhgn29g","slide":8,"text":"1. Ask","textPreview":"1. Ask","textChars":6,"textLines":1,"bbox":[84,228,142,48]}
+{"kind":"textbox","id":"sh/0fepkzup","slide":8,"text":"Run or refine a capacity expansion scenario.","textPreview":"Run or refine a capacity expansion scenario.","textChars":44,"textLines":1,"bbox":[250,232,420,42]}
+{"kind":"textbox","id":"sh/p0bi9s36","slide":8,"text":"2. Select skill","textPreview":"2. Select skill","textChars":15,"textLines":1,"bbox":[84,306,142,48]}
+{"kind":"textbox","id":"sh/x0nuxc3y","slide":8,"text":"Codex loads the relevant skill instructions.","textPreview":"Codex loads the relevant skill instructions.","textChars":44,"textLines":1,"bbox":[250,310,420,42]}
+{"kind":"textbox","id":"sh/4fu18jqh","slide":8,"text":"3. Act on files","textPreview":"3. Act on files","textChars":15,"textLines":1,"bbox":[84,384,142,48]}
+{"kind":"textbox","id":"sh/fu18jqh0","slide":8,"text":"Validate config, run model, parse logs, inspect outputs.","textPreview":"Validate config, run model, parse logs, inspect outputs.","textChars":56,"textLines":1,"bbox":[250,388,420,42]}
+{"kind":"textbox","id":"sh/m94fu18j","slide":8,"text":"4. Decide next step","textPreview":"4. Decide next step","textChars":19,"textLines":1,"bbox":[84,462,142,48]}
+{"kind":"textbox","id":"sh/xobm58z2","slide":8,"text":"Stop, recommend fix, or safely patch solver settings.","textPreview":"Stop, recommend fix, or safely patch solver settings.","textChars":53,"textLines":1,"bbox":[250,466,420,42]}
+{"kind":"textbox","id":"sh/83itgfml","slide":8,"text":"Example command\npython -m agent.orchestrator run --config test\\\\capacity_expansion_test_1\\\\test_scenario_1_output.yaml --run-id demo_run --max-iterations 2","textPreview":"Example command | python -m agent.orchestrator run --config test\\\\capacity_expansion_test_1\\\\test_scenario_1_output.yaml --run-id demo_ru...","textChars":155,"textLines":2,"bbox":[690,244,470,174]}
+{"kind":"textbox","id":"sh/fil0rqd4","slide":8,"text":"Expected artifacts\nruns/<run_id>/run_state.json\nruns/run_history.jsonl\niteration configs when reruns occur","textPreview":"Expected artifacts | runs/<run_id>/run_state.json | runs/run_history.jsonl | iteration configs when reruns occur","textChars":106,"textLines":4,"bbox":[690,452,470,126]}
+{"kind":"notes","id":"nt/234o5v","slide":8,"text":""}
+{"kind":"slide","id":"sl/q6xpm3","slide":9,"title":"APP STRUCTURE","textShapes":19}
+{"kind":"textbox","id":"sh/72x4nap4","slide":9,"text":"APP STRUCTURE","textPreview":"APP STRUCTURE","textChars":13,"textLines":1,"bbox":[64,52,540,22]}
+{"kind":"textbox","id":"sh/0nuxc3yl","slide":9,"text":"The executable app is small enough to inspect but structured around durable contracts","textPreview":"The executable app is small enough to inspect but structured around durable contracts","textChars":85,"textLines":1,"bbox":[64,84,960,102]}
+{"kind":"textbox","id":"sh/p8nqxs72","slide":9,"text":"The current codebase is an orchestration layer around existing model runners, not a monolithic modeling rewrite.","textPreview":"The current codebase is an orchestration layer around existing model runners, not a monolithic modeling rewrite.","textChars":112,"textLines":1,"bbox":[64,184,980,46]}
+{"kind":"textbox","id":"sh/itgfmlkj","slide":9,"text":"AI-ESM progress","textPreview":"AI-ESM progress","textChars":15,"textLines":1,"bbox":[64,674,360,22]}
+{"kind":"textbox","id":"sh/7ed8bat4","slide":9,"text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1180,674,40,22]}
+{"kind":"shape","id":"sh/0z61032l","slide":9,"bbox":[64,658,1152,1]}
+{"kind":"textbox","id":"sh/pkzupwb2","slide":9,"text":"agent/orchestrator.py","textPreview":"agent/orchestrator.py","textChars":21,"textLines":1,"bbox":[86,208,310,38]}
+{"kind":"textbox","id":"sh/i5sneloj","slide":9,"text":"CLI entrypoint, controller decisions, subprocess execution, iteration loop","textPreview":"CLI entrypoint, controller decisions, subprocess execution, iteration loop","textChars":74,"textLines":1,"bbox":[410,208,720,38]}
+{"kind":"textbox","id":"sh/7qpg3ex0","slide":9,"text":"agent/validation.py","textPreview":"agent/validation.py","textChars":19,"textLines":1,"bbox":[86,263,310,38]}
+{"kind":"textbox","id":"sh/fu18jqh0","slide":9,"text":"Pre-solve scenario validation and path/schema normalization","textPreview":"Pre-solve scenario validation and path/schema normalization","textChars":59,"textLines":1,"bbox":[410,263,720,38]}
+{"kind":"textbox","id":"sh/m94fu18j","slide":9,"text":"agent/solver_log_analysis.py","textPreview":"agent/solver_log_analysis.py","textChars":28,"textLines":1,"bbox":[86,318,310,38]}
+{"kind":"textbox","id":"sh/x0nuxc3y","slide":9,"text":"Solver log parser and fallback diagnostics","textPreview":"Solver log parser and fallback diagnostics","textChars":42,"textLines":1,"bbox":[410,318,720,38]}
+{"kind":"textbox","id":"sh/4fu18jqh","slide":9,"text":"agent/output_analysis.py","textPreview":"agent/output_analysis.py","textChars":24,"textLines":1,"bbox":[86,373,310,38]}
+{"kind":"textbox","id":"sh/fil0rqd4","slide":9,"text":"Physical and economic plausibility checks","textPreview":"Physical and economic plausibility checks","textChars":41,"textLines":1,"bbox":[410,373,720,38]}
+{"kind":"textbox","id":"sh/qxs72x4n","slide":9,"text":"agent/refiner.py","textPreview":"agent/refiner.py","textChars":16,"textLines":1,"bbox":[86,428,310,38]}
+{"kind":"textbox","id":"sh/xobm58z2","slide":9,"text":"Recommendation-only diagnostic-to-fix mapping","textPreview":"Recommendation-only diagnostic-to-fix mapping","textChars":45,"textLines":1,"bbox":[410,428,720,38]}
+{"kind":"textbox","id":"sh/83itgfml","slide":9,"text":"agent/scenario_patching.py","textPreview":"agent/scenario_patching.py","textChars":26,"textLines":1,"bbox":[86,483,310,38]}
+{"kind":"textbox","id":"sh/fepkzupw","slide":9,"text":"Safe solver-setting patch creation","textPreview":"Safe solver-setting patch creation","textChars":34,"textLines":1,"bbox":[410,483,720,38]}
+{"kind":"textbox","id":"sh/mtwra5gb","slide":9,"text":"agent/iteration_memory.py","textPreview":"agent/iteration_memory.py","textChars":25,"textLines":1,"bbox":[86,538,310,38]}
+{"kind":"textbox","id":"sh/u18jqh0f","slide":9,"text":"Append-only run history and summaries","textPreview":"Append-only run history and summaries","textChars":37,"textLines":1,"bbox":[410,538,720,38]}
+{"kind":"notes","id":"nt/q6xpm3","slide":9,"text":""}
+{"kind":"slide","id":"sl/zlmiql","slide":10,"title":"HOW TO USE IT","textShapes":11}
+{"kind":"textbox","id":"sh/tovahoza","slide":10,"text":"HOW TO USE IT","textPreview":"HOW TO USE IT","textChars":13,"textLines":1,"bbox":[64,52,540,22]}
+{"kind":"textbox","id":"sh/ixczed8v","slide":10,"text":"Researchers interact through scenarios, runs, and history rather than hidden state","textPreview":"Researchers interact through scenarios, runs, and history rather than hidden state","textChars":82,"textLines":1,"bbox":[64,84,960,102]}
+{"kind":"textbox","id":"sh/bi9s36hc","slide":10,"text":"The working interface is command-line today, with clear artifacts for review and future UI integration.","textPreview":"The working interface is command-line today, with clear artifacts for review and future UI integration.","textChars":103,"textLines":1,"bbox":[64,184,980,46]}
+{"kind":"textbox","id":"sh/0fepkzup","slide":10,"text":"AI-ESM progress","textPreview":"AI-ESM progress","textChars":15,"textLines":1,"bbox":[64,674,360,22]}
+{"kind":"textbox","id":"sh/p0bi9s36","slide":10,"text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1180,674,40,22]}
+{"kind":"shape","id":"sh/i9s36hcr","slide":10,"bbox":[64,658,1152,1]}
+{"kind":"textbox","id":"sh/bulwval8","slide":10,"text":"Smoke run\npython -m agent.orchestrator run --config test\\capacity_expansion_test_1\\test_scenario_1_output.yaml --run-id orchestration_smoke_test","textPreview":"Smoke run | python -m agent.orchestrator run --config test\\capacity_expansion_test_1\\test_scenario_1_output.yaml --run-id orchestration_s...","textChars":144,"textLines":2,"bbox":[86,230,520,120]}
+{"kind":"textbox","id":"sh/0je9cvix","slide":10,"text":"Controlled rerun\npython -m agent.orchestrator run --config test\\capacity_expansion_test_1\\test_scenario_1_output.yaml --run-id controlled_rerun_smoke --max-iterations 2","textPreview":"Controlled rerun | python -m agent.orchestrator run --config test\\capacity_expansion_test_1\\test_scenario_1_output.yaml --run-id controll...","textChars":168,"textLines":2,"bbox":[86,388,520,130]}
+{"kind":"textbox","id":"sh/t47y1kre","slide":10,"text":"History\npython -m agent.orchestrator history","textPreview":"History | python -m agent.orchestrator history","textChars":44,"textLines":2,"bbox":[86,554,520,70]}
+{"kind":"shape","id":"sh/9s36hcrm","slide":10,"bbox":[680,270,8,8]}
+{"kind":"textbox","id":"sh/g7adsji5","slide":10,"text":"Review run_state.json for decisions, diagnostics, final summary, patch outcomes, and memory summary.","textPreview":"Review run_state.json for decisions, diagnostics, final summary, patch outcomes, and memory summary.","textChars":100,"textLines":1,"bbox":[700,262,410,44]}
+{"kind":"shape","id":"sh/rmhk3q5o","slide":10,"bbox":[680,368,8,8]}
+{"kind":"textbox","id":"sh/y1kre1w7","slide":10,"text":"Treat structural scenario changes as recommendations until approval workflow is expanded.","textPreview":"Treat structural scenario changes as recommendations until approval workflow is expanded.","textChars":89,"textLines":1,"bbox":[700,360,410,44]}
+{"kind":"shape","id":"sh/90je9cvi","slide":10,"bbox":[680,466,8,8]}
+{"kind":"textbox","id":"sh/gfmlkjm1","slide":10,"text":"Use the existing smoke scenario as the lowest-friction demo path.","textPreview":"Use the existing smoke scenario as the lowest-friction demo path.","textChars":65,"textLines":1,"bbox":[700,458,410,44]}
+{"kind":"notes","id":"nt/zlmiql","slide":10,"text":""}
+{"kind":"slide","id":"sl/puqga0","slide":11,"title":"CURRENT SMOKE RESULT","textShapes":18}
+{"kind":"textbox","id":"sh/kjm1cfa9","slide":11,"text":"CURRENT SMOKE RESULT","textPreview":"CURRENT SMOKE RESULT","textChars":20,"textLines":1,"bbox":[64,52,540,22]}
+{"kind":"textbox","id":"sh/r2p8nqxs","slide":11,"text":"The latest documented smoke scenario completes and passes core physical checks","textPreview":"The latest documented smoke scenario completes and passes core physical checks","textChars":78,"textLines":1,"bbox":[64,84,960,102]}
+{"kind":"textbox","id":"sh/2hwfyxob","slide":11,"text":"This gives the presentation a concrete demo anchor while keeping limitations visible.","textPreview":"This gives the presentation a concrete demo anchor while keeping limitations visible.","textChars":85,"textLines":1,"bbox":[64,184,980,46]}
+{"kind":"textbox","id":"sh/9gr2p8nq","slide":11,"text":"AI-ESM progress","textPreview":"AI-ESM progress","textChars":15,"textLines":1,"bbox":[64,674,360,22]}
+{"kind":"textbox","id":"sh/gvy90je9","slide":11,"text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1180,674,40,22]}
+{"kind":"shape","id":"sh/ra5gbq1o","slide":11,"bbox":[64,658,1152,1]}
+{"kind":"textbox","id":"sh/2p8nqxs7","slide":11,"text":"Final status","textPreview":"Final status","textChars":12,"textLines":1,"bbox":[86,230,300,40]}
+{"kind":"textbox","id":"sh/9knih4by","slide":11,"text":"COMPLETED","textPreview":"COMPLETED","textChars":9,"textLines":1,"bbox":[86,270,300,70]}
+{"kind":"textbox","id":"sh/kzupwb2h","slide":11,"text":"Solver status","textPreview":"Solver status","textChars":13,"textLines":1,"bbox":[446,230,300,40]}
+{"kind":"textbox","id":"sh/ulwval87","slide":11,"text":"OPTIMAL","textPreview":"OPTIMAL","textChars":7,"textLines":1,"bbox":[446,270,300,70]}
+{"kind":"textbox","id":"sh/j6tovaho","slide":11,"text":"Objective","textPreview":"Objective","textChars":9,"textLines":1,"bbox":[806,230,300,40]}
+{"kind":"textbox","id":"sh/crmhk3q5","slide":11,"text":"990,873,978.80 USD","textPreview":"990,873,978.80 USD","textChars":18,"textLines":1,"bbox":[806,270,300,70]}
+{"kind":"textbox","id":"sh/1cfa9w3m","slide":11,"text":"Max imbalance","textPreview":"Max imbalance","textChars":13,"textLines":1,"bbox":[86,364,300,40]}
+{"kind":"textbox","id":"sh/uxc3ylc7","slide":11,"text":"0.0 MWh","textPreview":"0.0 MWh","textChars":7,"textLines":1,"bbox":[86,404,300,70]}
+{"kind":"textbox","id":"sh/ji5snelo","slide":11,"text":"Capacity violation","textPreview":"Capacity violation","textChars":18,"textLines":1,"bbox":[446,364,300,40]}
+{"kind":"textbox","id":"sh/c3ylc7u5","slide":11,"text":"0.0 MWh","textPreview":"0.0 MWh","textChars":7,"textLines":1,"bbox":[446,404,300,70]}
+{"kind":"textbox","id":"sh/1kre1w7m","slide":11,"text":"NSE fraction","textPreview":"NSE fraction","textChars":12,"textLines":1,"bbox":[806,364,300,40]}
+{"kind":"textbox","id":"sh/q5o7qpg3","slide":11,"text":"0.0028%","textPreview":"0.0028%","textChars":7,"textLines":1,"bbox":[806,404,300,70]}
+{"kind":"textbox","id":"sh/jqh0fepk","slide":11,"text":"Refiner recommendation: STOP / NO FIX. Increasing max iterations does not trigger a rerun for this scenario, which is expected behavior.","textPreview":"Refiner recommendation: STOP / NO FIX. Increasing max iterations does not trigger a rerun for this scenario, which is expected behavior.","textChars":136,"textLines":1,"bbox":[102,550,1030,50]}
+{"kind":"notes","id":"nt/puqga0","slide":11,"text":""}
+{"kind":"slide","id":"sl/f2ett1","slide":12,"title":"DISCUSSION","textShapes":15}
+{"kind":"textbox","id":"sh/87ed8bat","slide":12,"text":"DISCUSSION","textPreview":"DISCUSSION","textChars":10,"textLines":1,"bbox":[64,52,540,22]}
+{"kind":"textbox","id":"sh/fmlkjm1c","slide":12,"text":"The next phase is about trust, scope expansion, and researcher ergonomics","textPreview":"The next phase is about trust, scope expansion, and researcher ergonomics","textChars":73,"textLines":1,"bbox":[64,84,960,102]}
+{"kind":"textbox","id":"sh/q1orytsv","slide":12,"text":"The MVP proves a repeatable loop; the research work is deciding how far automation should go and where humans approve changes.","textPreview":"The MVP proves a repeatable loop; the research work is deciding how far automation should go and where humans approve changes.","textChars":126,"textLines":1,"bbox":[64,184,980,46]}
+{"kind":"textbox","id":"sh/1gvy90je","slide":12,"text":"AI-ESM progress","textPreview":"AI-ESM progress","textChars":15,"textLines":1,"bbox":[64,674,360,22]}
+{"kind":"textbox","id":"sh/8z25kb6x","slide":12,"text":"12","textPreview":"12","textChars":2,"textLines":1,"bbox":[1180,674,40,22]}
+{"kind":"shape","id":"sh/je9cvixc","slide":12,"bbox":[64,658,1152,1]}
+{"kind":"textbox","id":"sh/qtcj6tov","slide":12,"text":"Limitations","textPreview":"Limitations","textChars":11,"textLines":1,"bbox":[92,230,480,54]}
+{"kind":"shape","id":"sh/xczed8v6","slide":12,"bbox":[104,314,8,8]}
+{"kind":"textbox","id":"sh/8v6psfil","slide":12,"text":"Skill quality and validation coverage determine agent quality.","textPreview":"Skill quality and validation coverage determine agent quality.","textChars":62,"textLines":1,"bbox":[124,306,420,44]}
+{"kind":"shape","id":"sh/yhgn29gr","slide":12,"bbox":[104,372,8,8]}
+{"kind":"textbox","id":"sh/n29gr2p8","slide":12,"text":"Structural edits and policy relaxations are still recommendation-only.","textPreview":"Structural edits and policy relaxations are still recommendation-only.","textChars":70,"textLines":1,"bbox":[124,364,420,44]}
+{"kind":"shape","id":"sh/gn29gr2p","slide":12,"bbox":[104,430,8,8]}
+{"kind":"textbox","id":"sh/58z25kb6","slide":12,"text":"Solver/model failures can require expert interpretation.","textPreview":"Solver/model failures can require expert interpretation.","textChars":56,"textLines":1,"bbox":[124,422,420,44]}
+{"kind":"shape","id":"sh/y90je9cv","slide":12,"bbox":[104,488,8,8]}
+{"kind":"textbox","id":"sh/nuxc3ylc","slide":12,"text":"Artifact provenance must stay disciplined for reproducibility.","textPreview":"Artifact provenance must stay disciplined for reproducibility.","textChars":62,"textLines":1,"bbox":[124,480,420,44]}
+{"kind":"textbox","id":"sh/gbq1oryt","slide":12,"text":"Future work","textPreview":"Future work","textChars":11,"textLines":1,"bbox":[708,230,480,54]}
+{"kind":"shape","id":"sh/5wjudg7a","slide":12,"bbox":[720,314,8,8]}
+{"kind":"textbox","id":"sh/u54zidon","slide":12,"text":"UI layer around scenarios, runs, diagnostics, and approvals.","textPreview":"UI layer around scenarios, runs, diagnostics, and approvals.","textChars":60,"textLines":1,"bbox":[740,306,410,44]}
+{"kind":"shape","id":"sh/nqxs72x4","slide":12,"bbox":[720,372,8,8]}
+{"kind":"textbox","id":"sh/je9cvixc","slide":12,"text":"Expanded tests for analyzers, patching, and memory behavior.","textPreview":"Expanded tests for analyzers, patching, and memory behavior.","textChars":60,"textLines":1,"bbox":[740,364,410,44]}
+{"kind":"shape","id":"sh/qtcj6tov","slide":12,"bbox":[720,430,8,8]}
+{"kind":"textbox","id":"sh/1gvy90je","slide":12,"text":"Richer benchmark scenarios beyond the current capacity expansion smoke case.","textPreview":"Richer benchmark scenarios beyond the current capacity expansion smoke case.","textChars":76,"textLines":1,"bbox":[740,422,410,44]}
+{"kind":"shape","id":"sh/8z25kb6x","slide":12,"bbox":[720,488,8,8]}
+{"kind":"textbox","id":"sh/fmlkjm1c","slide":12,"text":"Stronger provenance for every recommendation and model change.","textPreview":"Stronger provenance for every recommendation and model change.","textChars":62,"textLines":1,"bbox":[740,480,410,44]}
+{"kind":"notes","id":"nt/f2ett1","slide":12,"text":""}

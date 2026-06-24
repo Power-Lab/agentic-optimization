@@ -1,0 +1,18 @@
+Minimize total dispatch cost for an ERCOT 24-hour unit commitment horizon (2024-01-01) with the following constraints:
+
+- Renewable penetration minimum: 60% of total energy served
+- CO2 emission cap: 5,000 tCO2 for the full horizon
+- Spinning reserve requirement: 5% of load at each hour
+- Non-spinning reserve requirement: 3% of load at each hour
+
+Generator fleet:
+- gas_cc_1: 600 MW gas combined cycle, heat rate 6.5 MMBtu/MWh, fuel $3.20/MMBtu, startup $12,000, min up/down 4h, ramp 8 MW/min, emission 0.35 tCO2/MWh
+- gas_ct_1: 200 MW gas combustion turbine, heat rate 9.8 MMBtu/MWh, fuel $3.20/MMBtu, startup $3,000, min up/down 1h, ramp 3.33 MW/min, emission 0.55 tCO2/MWh
+- solar_1: 650 MW utility solar PV, zero marginal cost, synthetic summer profile
+- wind_1: 900 MW onshore wind, zero marginal cost, synthetic moderate wind profile
+
+Demand profile: synthetic typical day, peak 1,100 MW at 18:00 local time.
+Network: single-bus (copper plate) approximation.
+Solver: Gurobi MIP, gap tolerance 0.1%, time limit 600 seconds.
+
+Expected outcome: feasible solution with ~62% renewable penetration and emissions well below the 5,000 tCO2 cap.

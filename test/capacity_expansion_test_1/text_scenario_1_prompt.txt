@@ -1,0 +1,9 @@
+"Use the scenario_builder skill.
+
+Read the input from scenario_builder/assets/test_request_1.txt.
+
+Generate a structured YAML configuration following scenario_builder/assets/expected_config_schema.yaml.
+
+Save the output to scenario_builder/assets/generated_config_1.yaml.
+
+Ensure valid YAML, all required fields are filled, reasonable defaults are applied, and no extra explanation text."

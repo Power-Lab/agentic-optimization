@@ -1,0 +1,3 @@
+Using the scenario config above, generate a Julia/JuMP script for the thermal-only capacity expansion model.
+
+The script should load the generator and demand data, define capacity, generation, and non-served energy variables, add demand balance and capacity constraints, minimize total cost, solve with HiGHS, and save key outputs.

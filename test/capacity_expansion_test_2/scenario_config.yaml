@@ -1,0 +1,272 @@
+scenario_id: "capacity_expansion_test_2_thermal_greenfield"
+created_at: "2026-05-21T00:00:00-07:00"
+scenario_name: "basic_capacity_expansion_thermal_only"
+source_request: "Create a solver-ready scenario config for the basic thermal-only greenfield capacity expansion case using Geothermal, Coal, CCGT, and CT with non-served energy allowed at high penalty."
+
+model:
+  model_type: "greenfield_generation_capacity_expansion"
+  formulation_class: "linear_program"
+  modeling_stack:
+    language: "Julia"
+    package: "JuMP"
+    solver: "HiGHS"
+    optimizer_constructor: "HiGHS.Optimizer"
+  network_representation: "single_bus"
+  existing_capacity_treatment: "greenfield_no_existing_capacity"
+  unit_commitment: false
+  storage: false
+  transmission: false
+
+objective:
+  sense: "minimize"
+  description: "Minimize annualized fixed capacity cost, variable generation cost, and non-served energy penalty over all modeled hours."
+  expression: "sum(g in G, FixedCost[g] * CAP[g]) + sum(g in G, h in H, VarCost[g] * GEN[g,h]) + sum(h in H, NSECost * NSE[h])"
+  terms:
+    fixed_capacity_cost:
+      variable: "CAP[g]"
+      parameter: "FixedCost[g]"
+      units: "USD/year"
+    variable_generation_cost:
+      variable: "GEN[g,h]"
+      parameter: "VarCost[g]"
+      units: "USD"
+    non_served_energy_penalty:
+      variable: "NSE[h]"
+      parameter: "NSECost"
+      units: "USD"
+
+sets:
+  G:
+    description: "Thermal candidate generation technologies."
+    source_file: "doc/expansion_data/generators_for_expansion.csv"
+    source_column: "G"
+    include_values:
+      - "Geo"
+      - "Coal"
+      - "CCGT"
+      - "CT"
+    expected_descriptions:
+      Geo: "Geothermal"
+      Coal: "Supercritical Coal"
+      CCGT: "Natural gas CCGT"
+      CT: "Natural gas CT"
+    excluded_values:
+      - "Wind"
+      - "Solar"
+  H:
+    description: "Hourly demand periods for the planning year."
+    source_file: "doc/expansion_data/demand_for_expansion.csv"
+    source_column: "Hour"
+    expected_count: 8760
+    resolution_hours: 1.0
+
+input_data_files:
+  generators:
+    path: "doc/expansion_data/generators_for_expansion.csv"
+    format: "csv"
+    required: true
+    required_columns:
+      - "G"
+      - "Description"
+      - "Capex"
+      - "FixedOM"
+      - "VarOM"
+      - "HeatRate"
+      - "FuelCost"
+      - "WACC"
+      - "AssetLife"
+      - "CRF"
+      - "Annuity"
+      - "FixedCost"
+      - "VarCost"
+  demand:
+    path: "doc/expansion_data/demand_for_expansion.csv"
+    format: "csv"
+    required: true
+    required_columns:
+      - "Hour"
+      - "Demand"
+
+candidate_generator_filter:
+  mode: "include_only"
+  technology_id_column: "G"
+  include_values:
+    - "Geo"
+    - "Coal"
+    - "CCGT"
+    - "CT"
+  exclude_values:
+    - "Wind"
+    - "Solar"
+  fail_if_excluded_resource_selected: true
+
+parameters:
+  demand:
+    symbol: "Demand[h]"
+    source_file: "doc/expansion_data/demand_for_expansion.csv"
+    source_column: "Demand"
+    units: "MW"
+    interpretation: "Hourly demand; with one-hour timesteps this is equivalent to MWh required in each period."
+  fixed_cost:
+    symbol: "FixedCost[g]"
+    source_file: "doc/expansion_data/generators_for_expansion.csv"
+    source_column: "FixedCost"
+    units: "USD/MW-year"
+  variable_cost:
+    symbol: "VarCost[g]"
+    source_file: "doc/expansion_data/generators_for_expansion.csv"
+    source_column: "VarCost"
+    units: "USD/MWh"
+  non_served_energy_cost:
+    symbol: "NSECost"
+    value: 9000.0
+    units: "USD/MWh"
+    description: "High penalty for involuntary non-served energy."
+  timestep_hours:
+    symbol: "dt"
+    value: 1.0
+    units: "hours"
+
+decision_variables:
+  CAP:
+    index: ["G"]
+    domain: "NonNegativeReals"
+    units: "MW"
+    description: "New generating capacity built for each thermal candidate."
+  GEN:
+    index: ["G", "H"]
+    domain: "NonNegativeReals"
+    units: "MWh"
+    description: "Generation from each thermal resource in each hour."
+  NSE:
+    index: ["H"]
+    domain: "NonNegativeReals"
+    units: "MWh"
+    description: "Non-served energy in each hour."
+
+constraints:
+  demand_balance:
+    index: ["H"]
+    expression: "sum(g in G, GEN[g,h]) + NSE[h] == Demand[h]"
+    description: "Each hour's demand must be met by generation or non-served energy."
+  generation_capacity:
+    index: ["G", "H"]
+    expression: "GEN[g,h] <= CAP[g] * dt"
+    description: "Hourly generation from each thermal resource cannot exceed installed capacity for the one-hour interval."
+  nonnegative_capacity:
+    index: ["G"]
+    expression: "CAP[g] >= 0"
+    description: "Capacity build decisions are continuous and nonnegative."
+  nonnegative_generation:
+    index: ["G", "H"]
+    expression: "GEN[g,h] >= 0"
+    description: "Generation decisions are continuous and nonnegative."
+  nonnegative_nse:
+    index: ["H"]
+    expression: "NSE[h] >= 0"
+    description: "Non-served energy is continuous and nonnegative."
+
+solver_settings:
+  solver_name: "HiGHS"
+  optimizer_constructor: "HiGHS.Optimizer"
+  model_sense: "Min"
+  time_limit_seconds: 600
+  presolve: "on"
+  log_to_console: true
+  log_file: "test/capacity_expansion_test_2/highs_thermal_greenfield.log"
+  options:
+    primal_feasibility_tolerance: 1.0e-7
+    dual_feasibility_tolerance: 1.0e-7
+  expected_statuses:
+    - "OPTIMAL"
+
+julia_jump_implementation_hints:
+  packages:
+    - "CSV"
+    - "DataFrames"
+    - "JuMP"
+    - "HiGHS"
+    - "JSON"
+  set_construction:
+    G: "filtered_generators.G"
+    H: "demand.Hour"
+  variable_declarations:
+    - "@variable(model, CAP[g in G] >= 0)"
+    - "@variable(model, GEN[g in G, h in H] >= 0)"
+    - "@variable(model, NSE[h in H] >= 0)"
+  constraint_declarations:
+    - "@constraint(model, cDemandBalance[h in H], sum(GEN[g,h] for g in G) + NSE[h] == demand_by_hour[h])"
+    - "@constraint(model, cCapacity[g in G, h in H], GEN[g,h] <= CAP[g] * dt)"
+  objective_declaration: "@objective(model, Min, sum(fixed_cost[g] * CAP[g] for g in G) + sum(var_cost[g] * GEN[g,h] for g in G, h in H) + sum(NSECost * NSE[h] for h in H))"
+
+expected_output_files:
+  capacity_build:
+    path: "test/capacity_expansion_test_2/capacity_build.csv"
+    fields:
+      - "G"
+      - "Description"
+      - "capacity_mw"
+      - "fixed_cost_usd"
+  hourly_generation:
+    path: "test/capacity_expansion_test_2/hourly_generation.csv"
+    fields:
+      - "Hour"
+      - "G"
+      - "generation_mwh"
+  non_served_energy:
+    path: "test/capacity_expansion_test_2/non_served_energy.csv"
+    fields:
+      - "Hour"
+      - "nse_mwh"
+      - "nse_penalty_usd"
+  solve_summary:
+    path: "test/capacity_expansion_test_2/solve_summary.json"
+    fields:
+      - "scenario_id"
+      - "termination_status"
+      - "objective_value_usd"
+      - "total_fixed_cost_usd"
+      - "total_variable_cost_usd"
+      - "total_nse_mwh"
+      - "total_nse_penalty_usd"
+      - "peak_demand_mw"
+
+validation_checks:
+  pre_solve:
+    - id: "input_files_exist"
+      severity: "FAIL"
+      check: "Confirm generator and demand CSV files exist at the configured paths."
+    - id: "generator_columns_present"
+      severity: "FAIL"
+      check: "Confirm generators CSV includes G, Description, FixedCost, and VarCost."
+    - id: "demand_columns_present"
+      severity: "FAIL"
+      check: "Confirm demand CSV includes Hour and Demand."
+    - id: "hour_count_is_8760"
+      severity: "FAIL"
+      check: "Confirm demand data contains exactly 8760 hourly records."
+    - id: "thermal_only_candidate_set"
+      severity: "FAIL"
+      check: "Confirm the filtered generator set is exactly Geo, Coal, CCGT, and CT."
+    - id: "nse_penalty_high"
+      severity: "WARN"
+      check: "Confirm NSECost is materially higher than all thermal variable costs."
+  post_solve:
+    - id: "accepted_solver_status"
+      severity: "FAIL"
+      check: "Confirm HiGHS reports OPTIMAL."
+    - id: "demand_balance_residual"
+      severity: "FAIL"
+      check: "For every hour, abs(sum(GEN[g,h]) + NSE[h] - Demand[h]) <= 1e-5."
+    - id: "capacity_constraint_residual"
+      severity: "FAIL"
+      check: "For every generator-hour, GEN[g,h] <= CAP[g] * dt + 1e-5."
+    - id: "nonnegative_outputs"
+      severity: "FAIL"
+      check: "CAP, GEN, and NSE outputs are all nonnegative within tolerance."
+    - id: "cost_components_sum_to_objective"
+      severity: "FAIL"
+      check: "Fixed cost, variable cost, and NSE penalty sum to the reported objective within tolerance."
+
+validation_status: "PASS"
+validation_warnings: []

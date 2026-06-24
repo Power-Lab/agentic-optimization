@@ -1,0 +1,216 @@
+{
+  "session_id": "session_20240103_001",
+  "session_started_at": "2024-01-03T08:00:00Z",
+  "session_ended_at": "2024-01-03T10:15:00Z",
+  "total_wall_time_s": 8100,
+  "wall_time_budget_s": 14400,
+  "max_iterations": 10,
+  "total_iterations_run": 3,
+  "restructure_count": 1,
+  "final_action": "TERMINATE_SUCCESS",
+  "final_reason": "Refiner recommended STOP after iteration 3 — warm-start improvement was 0.071% (< 0.1% threshold). Only 2 feasible runs available; insufficient for full 3-point plateau check, but improvement is already below threshold, indicating near-convergence. TERMINATE_SUCCESS issued.",
+  "best_run_id": "run_id_103",
+  "best_objective_value_USD": 163133.0,
+  "events": [
+    {
+      "timestamp": "2024-01-03T08:00:00Z",
+      "iteration": 0,
+      "event": "SESSION_START",
+      "action": null,
+      "details": "Session initialized. Scenario Builder produced config with emission_cap_tCO2=800 and renewable_penetration_min=0.70. Budget: 10 iterations, 14400 s wall time."
+    },
+    {
+      "timestamp": "2024-01-03T08:01:00Z",
+      "iteration": 1,
+      "event": "ITERATION_START",
+      "action": "LAUNCH_SOLVER",
+      "next_skill": "model_executor",
+      "solver_hints": {
+        "mip_gap": 0.001,
+        "time_limit_s": 600,
+        "warm_start": false
+      },
+      "iteration_budget_remaining": 9,
+      "wall_time_remaining_s": 14339,
+      "restructure_count": 0,
+      "details": "Iteration 1 of 10. First run. Emission cap 800 tCO2 flagged as TIGHT in validation."
+    },
+    {
+      "timestamp": "2024-01-03T08:01:15Z",
+      "iteration": 1,
+      "event": "SOLVER_COMPLETED",
+      "action": null,
+      "solver_monitor": {
+        "status": "INFEASIBLE",
+        "last_mip_gap": null,
+        "elapsed_solver_time_s": 12.4
+      },
+      "details": "Solver returned INFEASIBLE. IIS: emission_cap[total], renewable_penetration_minimum."
+    },
+    {
+      "timestamp": "2024-01-03T08:01:20Z",
+      "iteration": 1,
+      "event": "DOWNSTREAM_COMPLETE",
+      "action": "TRIGGER_REFINER",
+      "downstream_status": {
+        "solver_log_analysis": "INFEASIBLE",
+        "output_analysis": "N/A",
+        "refiner_recommendation": "CONTINUE"
+      },
+      "details": "Log analyzer: INFEASIBLE (EMISSION_CAP_TOO_TIGHT). Refiner fix: emission_cap_tCO2 800 → 1000."
+    },
+    {
+      "timestamp": "2024-01-03T08:02:00Z",
+      "iteration": 1,
+      "event": "ITERATION_END",
+      "action": "TRIGGER_RESTRUCTURE",
+      "reason": "Log analyzer INFEASIBLE with IIS pointing to power_balance[t=*] at 40% of timesteps — demand exceeds total installed capacity at peak hours after emission cap fix attempt. Refiner confirms RESTRUCTURE is required.",
+      "restructure_count": 1,
+      "details": "First fix attempt (emission cap 800 → 1000) is insufficient — structural capacity gap detected. Routing to Scenario Builder with RESTRUCTURE flag to add gas_ct_1 (200 MW peaking unit)."
+    },
+    {
+      "timestamp": "2024-01-03T08:05:00Z",
+      "iteration": 1,
+      "event": "RESTRUCTURE_COMPLETE",
+      "action": null,
+      "details": "Scenario Builder rebuilt config: added gas_ct_1 (200 MW gas CT), set emission_cap_tCO2=1200, renewable_penetration_min=0.60. New run_id: run_id_102."
+    },
+    {
+      "timestamp": "2024-01-03T08:06:00Z",
+      "iteration": 2,
+      "event": "ITERATION_START",
+      "action": "LAUNCH_SOLVER",
+      "next_skill": "model_executor",
+      "solver_hints": {
+        "mip_gap": 0.001,
+        "time_limit_s": 600,
+        "warm_start": false
+      },
+      "iteration_budget_remaining": 8,
+      "wall_time_remaining_s": 13940,
+      "restructure_count": 1,
+      "details": "Iteration 2 of 10. Restructured scenario: 4-generator fleet including gas_ct_1. Emission cap relaxed to 1200."
+    },
+    {
+      "timestamp": "2024-01-03T08:11:22Z",
+      "iteration": 2,
+      "event": "SOLVER_RUNNING",
+      "action": "WAIT",
+      "solver_monitor": {
+        "status": "RUNNING",
+        "last_mip_gap": 0.0421,
+        "last_bound": 156000.0,
+        "last_incumbent": 172800.0,
+        "elapsed_solver_time_s": 180
+      },
+      "details": "Poll 6: gap 4.21%, converging at normal rate."
+    },
+    {
+      "timestamp": "2024-01-03T08:16:10Z",
+      "iteration": 2,
+      "event": "SOLVER_COMPLETED",
+      "action": null,
+      "solver_monitor": {
+        "status": "COMPLETED",
+        "last_mip_gap": 0.00094,
+        "last_bound": 162713.0,
+        "last_incumbent": 163249.0,
+        "elapsed_solver_time_s": 467
+      },
+      "details": "Solver OPTIMAL. Objective $163,249. MIP gap 0.094%."
+    },
+    {
+      "timestamp": "2024-01-03T08:17:00Z",
+      "iteration": 2,
+      "event": "DOWNSTREAM_COMPLETE",
+      "action": null,
+      "downstream_status": {
+        "solver_log_analysis": "OK",
+        "output_analysis": "OK",
+        "refiner_recommendation": "CONTINUE"
+      },
+      "details": "Log: OK. Output: OK. Refiner: CONTINUE (first feasible solution found — allow one more iteration to confirm)."
+    },
+    {
+      "timestamp": "2024-01-03T08:17:05Z",
+      "iteration": 2,
+      "event": "ITERATION_END",
+      "action": "LAUNCH_SOLVER",
+      "details": "Iteration 2 complete. First feasible solution. Refiner recommends CONTINUE. Proceeding to iteration 3."
+    },
+    {
+      "timestamp": "2024-01-03T08:18:00Z",
+      "iteration": 3,
+      "event": "ITERATION_START",
+      "action": "LAUNCH_SOLVER",
+      "next_skill": "model_executor",
+      "solver_hints": {
+        "mip_gap": 0.001,
+        "time_limit_s": 600,
+        "warm_start": true
+      },
+      "iteration_budget_remaining": 7,
+      "wall_time_remaining_s": 13000,
+      "restructure_count": 1,
+      "details": "Iteration 3 of 10. Warm start enabled from iteration 2 incumbent. No structural changes."
+    },
+    {
+      "timestamp": "2024-01-03T08:23:41Z",
+      "iteration": 3,
+      "event": "SOLVER_COMPLETED",
+      "action": null,
+      "solver_monitor": {
+        "status": "COMPLETED",
+        "last_mip_gap": 0.00071,
+        "last_bound": 163017.0,
+        "last_incumbent": 163133.0,
+        "elapsed_solver_time_s": 341
+      },
+      "details": "Solver OPTIMAL. Objective $163,133. MIP gap 0.071%. Improvement vs prior: 0.071% (116 USD / 163,249 USD)."
+    },
+    {
+      "timestamp": "2024-01-03T08:24:20Z",
+      "iteration": 3,
+      "event": "DOWNSTREAM_COMPLETE",
+      "action": null,
+      "downstream_status": {
+        "solver_log_analysis": "OK",
+        "output_analysis": "OK",
+        "refiner_recommendation": "CONTINUE"
+      },
+      "details": "Log: OK. Output: OK. Refiner: STOP (warm-start improvement 0.071% is below the 0.1% threshold — solution is near-optimal, further iterations unlikely to yield meaningful gains)."
+    },
+    {
+      "timestamp": "2024-01-03T08:24:25Z",
+      "iteration": 3,
+      "event": "CONVERGENCE_CHECK",
+      "action": null,
+      "convergence_trend": [
+        {"iteration": 2, "objective_value_USD": 163249.0, "improvement_pct": null},
+        {"iteration": 3, "objective_value_USD": 163133.0, "improvement_pct": 0.071}
+      ],
+      "plateau_detected": true,
+      "plateau_note": "Only 2 feasible runs — full 3-point plateau check not possible. However, single warm-start improvement (0.071%) is already below the 0.1% threshold. Refiner recommends STOP. Supervisory Controller accepts early termination.",
+      "details": "Warm-start gain below threshold. Refiner STOP recommendation accepted. Terminating."
+    },
+    {
+      "timestamp": "2024-01-03T08:24:30Z",
+      "iteration": 3,
+      "event": "ITERATION_END",
+      "action": "TERMINATE_SUCCESS",
+      "reason": "NEAR_CONVERGENCE — warm-start improvement 0.071% < 0.1% threshold and Refiner issued STOP. Terminating with best solution run_id_103.",
+      "termination_criteria_met": true,
+      "details": "Session complete. Best: run_id_103, obj=$163,133, emissions=2,720 tCO2, renewable fraction=62.4%. Restructure count: 1 (gas_ct_1 added at iteration 1)."
+    }
+  ],
+  "summary": {
+    "objective_USD": 163133.0,
+    "emissions_tCO2": 2720.0,
+    "renewable_fraction": 0.624,
+    "emission_cap_met": true,
+    "renewable_target_met": true,
+    "termination_reason": "CONVERGENCE_PLATEAU",
+    "restructures_performed": 1,
+    "restructure_details": "Added gas_ct_1 (200 MW gas CT) to resolve capacity gap; relaxed emission_cap to 1200 tCO2 and renewable_min to 0.60."
+  }
+}

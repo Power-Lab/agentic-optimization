@@ -1,0 +1,27 @@
+scenario:
+  name: base_dispatch_case
+  region: ERCOT
+  timestep_hours: 1
+
+demand_mw:
+  - 4200
+  - 4050
+  - 3900
+  - 4100
+
+generators:
+  gas_cc:
+    capacity_mw: 3500
+    variable_cost_usd_per_mwh: 45.0
+    emission_tco2_per_mwh: 0.37
+  wind:
+    capacity_mw: 1800
+    variable_cost_usd_per_mwh: 0.0
+    emission_tco2_per_mwh: 0.0
+
+solver:
+  name: gurobi
+  time_limit_sec: 300
+  mip_gap: 0.01
+  threads: 4
+

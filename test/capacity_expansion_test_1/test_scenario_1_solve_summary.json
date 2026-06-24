@@ -1,0 +1,17 @@
+{
+  "scenario_id": "thermal_greenfield_capacity_expansion_test_001",
+  "termination_status": "OPTIMAL",
+  "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+  "objective_value_usd": 990873978.7999924,
+  "total_fixed_cost_usd": 355352720.0,
+  "total_variable_cost_usd": 629788258.8000002,
+  "total_nse_mwh": 637.0,
+  "total_nse_penalty_usd": 5733000.0,
+  "candidate_technologies": [
+    "Geothermal",
+    "Supercritical Coal",
+    "Natural gas CCGT",
+    "Natural gas CT"
+  ],
+  "hours": 8760
+}

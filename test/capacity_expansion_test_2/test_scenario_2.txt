@@ -1,0 +1,5 @@
+Create a solver-ready scenario config for the basic capacity expansion.
+
+Start with the thermal-only greenfield case. Use Geothermal, Coal, CCGT, and CT to meet hourly demand. Non-served energy is allowed with a high penalty. Keep the model in Julia/JuMP with HiGHS.
+
+Return the scenario as a structured YAML config.

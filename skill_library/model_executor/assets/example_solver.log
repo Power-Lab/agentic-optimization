@@ -1,0 +1,28 @@
+=== Mock Solver Log (MVP proof-of-concept) ===
+Timestamp: 2024-01-01T08:01:02Z
+Run ID: run_id_001
+Model type: unit_commitment
+Region: ERCOT
+Horizon T=24 steps
+
+Gurobi 10.0.3 (mock)
+Set parameter MIPGap to value 0.001
+Set parameter TimeLimit to value 600
+Set parameter Threads to value 8
+
+Academic license - for non-commercial use only - expires 2025-01-01
+
+Presolve: 480 rows removed, 320 columns removed
+
+   Nodes    |    Current Node    |     Objective Bounds      |  Work
+  Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+      0     0          -    0    -          -  142500.0    -     -    0s
+    100    40   168000.0    3   18   168000.0  158000.0  5.95%  14.2    8s
+    500   120   158000.0    6    8   155000.0  149000.0  3.87%  11.8   38s
+   2000   300   149000.0    9    4   148500.0  146200.0  1.55%  10.1  142s
+   4821   120   142500.0   15    0   142500.0  163115.0  0.08%   9.9  312s
+
+Optimal solution found (tolerance 0.001)
+Best objective 163249.000000, best bound 163115.000000, gap 0.082%
+Solve time: 312.7s

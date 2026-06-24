@@ -1,0 +1,55 @@
+{
+  "run_id": "run_id_002",
+  "analyzed_at": "2024-01-01T08:15:15Z",
+  "overall_status": "INFEASIBLE",
+  "infeasibility": {
+    "detected": true,
+    "type": "PRIMAL_INFEASIBLE",
+    "iis_constraints": [
+      "emission_cap[total]",
+      "power_balance[t=08]",
+      "power_balance[t=09]",
+      "renewable_penetration_minimum"
+    ],
+    "likely_cause": "EMISSION_CAP_TOO_TIGHT"
+  },
+  "convergence": {
+    "converged": false,
+    "final_mip_gap": null,
+    "gap_trajectory": [],
+    "convergence_rate": "N/A",
+    "bound_quality": "N/A",
+    "presolve_reductions": {
+      "rows_removed": 80,
+      "columns_removed": 40
+    }
+  },
+  "numerical_issues": {
+    "detected": false,
+    "patterns": [],
+    "scaling_warnings": false,
+    "coefficient_range": {
+      "min": 1.0,
+      "max": 800.0,
+      "ratio": 800.0,
+      "status": "ACCEPTABLE"
+    }
+  },
+  "performance": {
+    "node_count": 0,
+    "nodes_per_second": null,
+    "lp_relaxation_value_USD": null,
+    "integrality_gap_pct": null,
+    "presolve_time_s": 1.2,
+    "lp_solve_time_s": null,
+    "mip_solve_time_s": null
+  },
+  "warnings": [],
+  "errors": [],
+  "recommendations": [
+    "Emission cap of 800 tCO2 is infeasible given the available renewable capacity. IIS confirms emission_cap[total] and renewable_penetration_minimum are jointly binding during hours 8-10 when solar is unavailable.",
+    "Recommend relaxing emission_cap_tCO2 from 800 to at least 1100 tCO2 (20% relaxation as first attempt).",
+    "Alternatively, reduce renewable_penetration_min from 0.70 to 0.60 to allow more thermal dispatch during low-solar hours.",
+    "If both relaxations still produce INFEASIBLE, consider adding battery storage or dispatchable renewable capacity (RESTRUCTURE)."
+  ]
+}

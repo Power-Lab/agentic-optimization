@@ -1,0 +1,202 @@
+scenario_id: "thermal_greenfield_capacity_expansion_test_001"
+created_at: "2026-05-20T00:00:00Z"
+model_type: "greenfield_generation_capacity_expansion"
+modeling_stack:
+  language: "Julia"
+  algebraic_modeling: "JuMP"
+  solver: "HiGHS"
+
+objective:
+  sense: "minimize"
+  description: "Minimize total annualized fixed capacity cost, variable generation cost, and non-served energy penalty over an 8760-hour planning horizon."
+  terms:
+    fixed_capacity_cost:
+      expression: "sum(g in CandidateGenerators, fixed_cost_per_mw_year[g] * build_capacity_mw[g])"
+      units: "USD/year"
+    variable_generation_cost:
+      expression: "sum(t in Hours, g in CandidateGenerators, variable_cost_per_mwh[g] * generation_mwh[g,t])"
+      units: "USD"
+    non_served_energy_penalty:
+      expression: "sum(t in Hours, nse_cost_usd_per_mwh * non_served_energy_mwh[t])"
+      units: "USD"
+
+sets:
+  hours:
+    name: "Hours"
+    source: "expansion_data/demand_for_expansion.csv"
+    expected_count: 8760
+    index_column: "hour"
+  candidate_generators:
+    name: "CandidateGenerators"
+    source: "expansion_data/generators_for_expansion.csv"
+    include_technologies:
+      - "Geothermal"
+      - "Coal"
+      - "CCGT"
+      - "CT"
+    exclude_technologies:
+      - "Wind"
+      - "Solar"
+
+input_data_files:
+  generator_data:
+    path: "expansion_data/generators_for_expansion.csv"
+    required: true
+    expected_fields:
+      - "technology"
+      - "fixed_cost_per_mw_year"
+      - "variable_cost_per_mwh"
+      - "capacity_factor"
+      - "max_capacity_mw"
+  demand_data:
+    path: "expansion_data/demand_for_expansion.csv"
+    required: true
+    expected_fields:
+      - "hour"
+      - "demand_mw"
+
+candidate_generator_filter:
+  mode: "include_only"
+  technology_column: "technology"
+  include_values:
+    - "Geothermal"
+    - "Coal"
+    - "CCGT"
+    - "CT"
+  reject_if_present_after_filter:
+    - "Wind"
+    - "Solar"
+
+key_parameters:
+  planning_horizon_hours: 8760
+  timestep_hours: 1.0
+  nse_cost_usd_per_mwh: 9000.0
+  allow_non_served_energy: true
+  network_representation: "single_bus"
+  capacity_expansion_mode: "greenfield"
+  existing_capacity_treatment: "ignored"
+  emissions_policy: null
+  reserve_margin_policy: null
+  generator_parameters_from_csv:
+    fixed_cost_per_mw_year: "Annualized fixed cost for candidate build capacity."
+    variable_cost_per_mwh: "Marginal generation cost."
+    max_capacity_mw: "Upper bound on build capacity by technology or candidate resource."
+    capacity_factor: "Hourly or scalar availability multiplier, depending on input schema."
+
+decision_variables:
+  build_capacity_mw:
+    index: ["CandidateGenerators"]
+    domain: "NonNegativeReals"
+    description: "New installed capacity selected for each candidate generator technology."
+  generation_mwh:
+    index: ["CandidateGenerators", "Hours"]
+    domain: "NonNegativeReals"
+    description: "Hourly energy production by candidate generator."
+  non_served_energy_mwh:
+    index: ["Hours"]
+    domain: "NonNegativeReals"
+    description: "Unserved hourly demand allowed at high penalty cost."
+
+constraints:
+  demand_balance:
+    index: ["Hours"]
+    expression: "sum(g in CandidateGenerators, generation_mwh[g,t]) + non_served_energy_mwh[t] == demand_mw[t]"
+    description: "Hourly load must be met by thermal generation or non-served energy."
+  generation_capacity_limit:
+    index: ["CandidateGenerators", "Hours"]
+    expression: "generation_mwh[g,t] <= build_capacity_mw[g] * availability_factor[g,t] * timestep_hours"
+    description: "Hourly generation cannot exceed built capacity adjusted for availability."
+  build_capacity_upper_bound:
+    index: ["CandidateGenerators"]
+    expression: "build_capacity_mw[g] <= max_capacity_mw[g]"
+    description: "Candidate build is limited by resource-specific maximum capacity."
+  non_served_energy_limit:
+    index: ["Hours"]
+    expression: "0 <= non_served_energy_mwh[t] <= demand_mw[t] * timestep_hours"
+    description: "NSE cannot exceed the demand in each hour."
+  excluded_resource_guard:
+    index: ["CandidateGenerators"]
+    expression: "technology[g] not in ['Wind', 'Solar']"
+    description: "First test scenario must not include wind or solar candidates."
+
+solver_settings:
+  solver_name: "HiGHS"
+  optimizer_constructor: "HiGHS.Optimizer"
+  time_limit_seconds: 600
+  relative_mip_gap: null
+  primal_feasibility_tolerance: 1.0e-7
+  dual_feasibility_tolerance: 1.0e-7
+  presolve: "on"
+  log_to_console: true
+  log_file: "test/scenario_builder/test_scenario_1_highs.log"
+  notes:
+    - "The base formulation is continuous linear programming unless integer build decisions are added later."
+    - "HiGHS-specific options should be applied only if supported by the installed HiGHS.jl version."
+
+expected_output_files:
+  capacity_build:
+    path: "test/scenario_builder/test_scenario_1_capacity_build.csv"
+    fields:
+      - "technology"
+      - "build_capacity_mw"
+      - "fixed_cost_usd"
+  hourly_dispatch:
+    path: "test/scenario_builder/test_scenario_1_dispatch.csv"
+    fields:
+      - "hour"
+      - "technology"
+      - "generation_mwh"
+  non_served_energy:
+    path: "test/scenario_builder/test_scenario_1_nse.csv"
+    fields:
+      - "hour"
+      - "non_served_energy_mwh"
+      - "nse_penalty_usd"
+  solve_summary:
+    path: "test/scenario_builder/test_scenario_1_solve_summary.json"
+    fields:
+      - "termination_status"
+      - "objective_value_usd"
+      - "total_fixed_cost_usd"
+      - "total_variable_cost_usd"
+      - "total_nse_mwh"
+      - "total_nse_penalty_usd"
+
+validation_checks:
+  pre_solve:
+    - id: "input_files_exist"
+      severity: "FAIL"
+      check: "Confirm generator and demand CSV files exist before model construction."
+    - id: "demand_has_8760_rows"
+      severity: "FAIL"
+      check: "Confirm demand_for_expansion.csv has exactly 8760 hourly rows."
+    - id: "thermal_only_candidates"
+      severity: "FAIL"
+      check: "Confirm filtered candidate set contains only Geothermal, Coal, CCGT, and CT."
+    - id: "no_wind_or_solar"
+      severity: "FAIL"
+      check: "Confirm Wind and Solar are absent after filtering."
+    - id: "nse_penalty_positive"
+      severity: "FAIL"
+      check: "Confirm NSECost is 9000 USD/MWh and greater than all thermal variable costs."
+  post_solve:
+    - id: "optimal_or_feasible_status"
+      severity: "FAIL"
+      check: "HiGHS termination status should be OPTIMAL or another accepted feasible status."
+    - id: "hourly_balance_residual"
+      severity: "FAIL"
+      check: "For every hour, absolute demand balance residual must be <= 1e-5 MWh."
+    - id: "capacity_limits_respected"
+      severity: "FAIL"
+      check: "Generation must not exceed built capacity times availability for any generator-hour."
+    - id: "nse_reasonableness"
+      severity: "WARN"
+      check: "Total NSE should be near zero unless thermal build limits make full service uneconomic or impossible."
+    - id: "cost_breakdown_nonnegative"
+      severity: "FAIL"
+      check: "Fixed cost, variable cost, and NSE penalty must all be nonnegative."
+
+validation_status: "WARN"
+validation_warnings:
+  - code: "INPUT_FILES_NOT_FOUND_IN_WORKSPACE"
+    message: "The requested paths expansion_data/generators_for_expansion.csv and expansion_data/demand_for_expansion.csv were not present during scenario config generation; keep pre-solve file existence checks enabled."

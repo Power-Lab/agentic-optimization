@@ -1,0 +1,5 @@
+G,Description,capacity_mw,fixed_cost_usd
+Geo,Geothermal,0.0,0.0
+Coal,Supercritical Coal,0.0,0.0
+CCGT,Natural gas CCGT,3328.0,2.742272e8
+CT,Natural gas CT,1290.0,8.112552e7
