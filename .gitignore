@@ -13,3 +13,6 @@ venv/
 
 # macOS
 .DS_Store
+
+# Local-only strategy docs (never pushed)
+docs/concept-notes/
