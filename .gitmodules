@@ -1,4 +1,6 @@
-[submodule "models/village"]
-	path = models/village
-	url = https://github.com/Power-Lab/village-indonesia-100gw.git
-	branch = solar-resource-assessment
+[submodule "models/pathways"]
+	path = models/pathways
+	url = https://github.com/Power-Lab/AdvAppliedEnergy_Pathways_2025.git
+[submodule "models/garuda"]
+	path = models/garuda
+	url = https://github.com/kaarthi19/garuda.git
