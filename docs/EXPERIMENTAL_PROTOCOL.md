@@ -61,7 +61,13 @@ RQ4 is what makes it a framework contribution rather than a one-model demo.
   so *editing a skill edits the experiment* and must be noted here when it happens.
 - **Guardrail tiers** (declared per adapter): A = numerics (auto), B = sanctioned
   parameters (auto + flag), C = policy constraints (human sign-off only); unknown
-  keys default to C; illegal values rejected in **both** conditions.
+  keys default to C; illegal values rejected in **both** conditions. A second,
+  value-level axis (`InterventionSpec.transition_rules`, added after the
+  2026-09-05 review) lets an adapter escalate a *relaxing transition* of a Tier B
+  key to C — e.g. leaving garuda's `nocoal` scenario, or shrinking pypsa_toy's
+  horizon while an absolute carbon cap is set — without changing the key's tier;
+  rules can only make a change stricter. This closes the "solve it by shrinking
+  the problem the policy applies to" bypass and is part of the guarded condition.
 
 **Reference adapter.** `garuda` (`adapters/garuda/`, model pinned at
 `models/garuda`) replaces the earlier `village` adapter, which has been deleted.

@@ -5,14 +5,19 @@ refiner skill is forbidden from bypassing, against the garuda adapter's
 modeler-approved tier declaration.
 """
 
+from types import SimpleNamespace
+
 import pytest
 
 from framework import (
+    InterventionSpec,
     ProposedChange,
     RunRecord,
+    TransitionRule,
     apply_refinements,
     decide,
 )
+from framework.interventions import Tier
 from adapters.garuda import GarudaAdapter
 
 SPEC = GarudaAdapter().intervention_spec()
@@ -182,3 +187,69 @@ def test_run_record_roundtrips_with_history(tmp_path):
     assert loaded.refinement_history[0].change == {"mipgap": [None, 0.05]}
     assert loaded.refinement_history[1].tier == "C"
     assert loaded.refinement_history[1].applied is False
+
+
+# ---- value-level escalations (a Tier B key, a Tier C transition) -----------
+
+def test_engine_switch_is_tier_b_in_both_directions():
+    """Both garuda engines share build_model! — the same non-served-energy slack
+    (vNSE/vVIL_NSE, optimizer.jl) and the same CO2 cap / RE floor (dispatch_engine.jl
+    passes them through unchanged). Switching engine fixes capacity and relaxes
+    unit commitment; it relaxes neither demand nor a policy constraint, so the
+    modeler-approved Tier B holds in both directions and no transition rule
+    escalates it."""
+    for before, after in (("expansion", "dispatch"), ("dispatch", "expansion")):
+        d = decide(ProposedChange("engine", before, after), SPEC)
+        assert d.tier is Tier.B and d.auto_apply and not d.rejected
+    assert not any(r.key == "engine" for r in SPEC.transition_rules)
+
+
+def test_leaving_a_nocoal_scenario_is_tier_c():
+    d = decide(ProposedChange("scenario", "nocoal", "grid"), SPEC)
+    assert d.tier is Tier.C and not d.auto_apply
+    d = decide(ProposedChange("scenario", "highimportprice", "gridvillage"), SPEC)
+    assert d.tier is Tier.C and not d.auto_apply
+    # entering the restriction, and unrelated scenario moves, stay Tier B
+    assert decide(ProposedChange("scenario", "grid", "nocoal"), SPEC).tier is Tier.B
+    assert decide(ProposedChange("scenario", "base", "grid"), SPEC).tier is Tier.B
+
+
+def test_an_illegal_scenario_value_is_still_rejected_before_any_escalation():
+    d = decide(ProposedChange("scenario", "nocoal", "banana"), SPEC)
+    assert d.rejected and not d.auto_apply
+
+
+def test_apply_refinements_blocks_an_escalated_transition():
+    rec = _record()
+    rec.config["scenario"] = "nocoal"
+    out = apply_refinements(
+        rec, [SimpleNamespace(key="scenario", before="nocoal", after="grid",
+                              rationale="make it feasible")],
+        SPEC)
+    assert out.needs_human and not out.applied
+    assert out.next_config["scenario"] == "nocoal"
+    assert out.blocked[0].tier == "C"
+
+
+def test_a_transition_rule_can_never_downgrade_a_policy_key():
+    """Rules may only make a change stricter — an adapter cannot use one to turn
+    a Tier C key into an auto-applied one."""
+    spec = InterventionSpec(
+        tier_c_keys={"co2_cap"},
+        transition_rules=[TransitionRule(key="co2_cap", tier=Tier.A,
+                                         reason="tries to downgrade")],
+    )
+    d = decide(ProposedChange("co2_cap", 100, 1_000_000), spec)
+    assert d.tier is Tier.C and not d.auto_apply
+
+
+def test_cross_key_rules_do_not_fire_without_a_config():
+    """A rule conditioned on another key cannot claim its condition holds when
+    the caller gave no context."""
+    spec = InterventionSpec(
+        tier_b_keys={"horizon"},
+        transition_rules=[TransitionRule(key="horizon", tier=Tier.C, direction="decrease",
+                                         when_config_keys=["cap"], reason="shrinks the cap")],
+    )
+    assert decide(ProposedChange("horizon", 14, 1), spec).auto_apply
+    assert not decide(ProposedChange("horizon", 14, 1), spec, config={"cap": 1.0}).auto_apply

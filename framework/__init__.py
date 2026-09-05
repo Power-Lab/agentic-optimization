@@ -12,6 +12,7 @@ from framework.analyze import read_outputs, record_anomalies
 from framework.interventions import (
     Decision,
     InterventionSpec,
+    TransitionRule,
     ProposedChange,
     Tier,
     decide,
@@ -64,6 +65,7 @@ __all__ = [
     # guardrail
     "Tier",
     "InterventionSpec",
+    "TransitionRule",
     "ProposedChange",
     "Decision",
     "decide",

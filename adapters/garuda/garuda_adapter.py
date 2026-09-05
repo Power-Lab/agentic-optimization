@@ -30,7 +30,7 @@ from types import SimpleNamespace
 from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Tuple
 
 from framework.adapter import Adapter, ValidationResult
-from framework.interventions import InterventionSpec
+from framework.interventions import InterventionSpec, Tier, TransitionRule
 from framework.run_record import Execution
 
 try:  # the framework's streamer: tee + ticks + abort file, shared by all adapters
@@ -119,7 +119,12 @@ class KeySpec:
     exclusive_minimum: bool = False
 
 
-# Every optional key run_model.jl reads (all 15), with the modeler-approved tier.
+# Every config key run_model.jl reads, with the modeler-approved tier — the
+# optional ones *and* the five required ones (scenario, clean, CO2_limit,
+# CO235reduction, BAUCO2emissions), which are declared here so they carry a tier
+# and a doc; describe_config() filters those out of the "optional" listing. No
+# count is quoted on purpose: re-sync by diffing this list against the keys
+# run_model.jl actually reads, not against a number that goes stale.
 OPTIONAL_KEYS: List[KeySpec] = [
     KeySpec("mipgap", "A", "number", 0.01,
             "relative MIP gap the solver stops at (HiGHS mip_rel_gap / Gurobi MIPGap). "
@@ -146,13 +151,22 @@ OPTIONAL_KEYS: List[KeySpec] = [
             "adapter injects one (the run directory's basename) when the config has none, so "
             "concurrent runs never overwrite each other's results folder."),
     KeySpec("scenario", "B", "enum", None,
-            "REQUIRED. Which scenario configuration to solve (see scenario semantics).",
+            "REQUIRED. Which scenario configuration to solve (see scenario semantics). "
+            "Tier B as a *choice*, but two of its values carry a modelled restriction "
+            "rather than a parameter: 'nocoal' is the only switch on the renewables-only "
+            "village electricity balance, and 'highimportprice' is the only switch on the "
+            "x1.21 import price. Moving AWAY from either drops that restriction, so those "
+            "transitions are gated at Tier C (see TRANSITION_RULES / the value-level "
+            "escalations listed below).",
             enum=SCENARIO_ENUM),
     KeySpec("engine", "B", "enum", "expansion",
             "'expansion' co-optimises investment + operation (MILP with exact unit commitment "
-            "by default); 'dispatch' fixes capacity to the existing fleet and solves only "
-            "operations (LP by default) — always feasible w.r.t. demand because non-served "
-            "energy is the slack, so it reports a reliability gap instead of failing.",
+            "by default); 'dispatch' fixes capacity to the existing fleet (New_Build units "
+            "at 0) and solves only operations (LP by default). BOTH engines share "
+            "build_model!: the same non-served-energy slack at VOLL (vNSE / vVIL_NSE, capped "
+            "by cMaxNSE) and the same CO2 cap / RE floor, so switching engine neither "
+            "relaxes demand nor a policy constraint — an expansion case that is infeasible "
+            "under a cap stays infeasible in dispatch. Tier B in both directions.",
             enum=ENGINE_ENUM),
     KeySpec("relax_uc", "B", "bool", None,
             "LP-relax the unit-commitment (and village grid-connection) binaries. Default true "
@@ -169,8 +183,12 @@ OPTIONAL_KEYS: List[KeySpec] = [
     KeySpec("export_price", "B", "number", 0.0,
             "$/MWh feed-in price sites earn for exports; 0 = exports are unremunerated spill. "
             "Keep <= import_price: a higher export price lets a connected site profit from "
-            "importing and re-exporting (the model prints a WARNING and results are distorted "
-            "by that arbitrage).",
+            "importing and re-exporting. On a dataset whose grid zone has demand the model "
+            "only prints 'WARNING: export_price (...) > import_price (...)' and the results "
+            "are distorted by that arbitrage; on a dataset with NO grid demand it refuses "
+            "the configuration outright (optimizer.jl raises 'export_price (...) > "
+            "import_price (...) on a dataset with NO grid demand') and the run ends as "
+            "ERROR/preflight — unless export_backed_by_generation is true.",
             minimum=0.0),
     KeySpec("village_storage_max_mwh", "B", "number", 208.0,
             "per-unit cap (MWh) on new site storage energy.",
@@ -219,6 +237,36 @@ ALLOWED_VALUES: Dict[str, List[Any]] = {
     k.name: list(k.enum) for k in OPTIONAL_KEYS if k.enum is not None
 }
 
+# ---- value-level escalations (the guardrail's second axis) -------------------
+# `scenario` is a Tier B *choice*, but two of its transitions remove a modelled
+# restriction instead of moving a sanctioned parameter. Those transitions are
+# gated at Tier C; entering the restriction stays auto-applied. (`engine` has no
+# rule on purpose: both engines share build_model!, incl. the NSE slack and the
+# policy constraints, so neither direction relaxes the study.)
+_BASE_IMPORT_PRICE = min(f["ImportPrice"] for f in SCENARIO_FLAGS.values())
+_NOCOAL_SCENARIOS = sorted(s for s, f in SCENARIO_FLAGS.items() if f["NoCoal"])
+_COAL_SCENARIOS = sorted(s for s, f in SCENARIO_FLAGS.items() if not f["NoCoal"])
+_HIGH_IMPORT_SCENARIOS = sorted(
+    s for s, f in SCENARIO_FLAGS.items() if f["ImportPrice"] > _BASE_IMPORT_PRICE)
+_BASE_IMPORT_SCENARIOS = sorted(
+    s for s, f in SCENARIO_FLAGS.items() if f["ImportPrice"] <= _BASE_IMPORT_PRICE)
+
+TRANSITION_RULES: List[TransitionRule] = [
+    TransitionRule(
+        key="scenario", tier=Tier.C,
+        from_values=_NOCOAL_SCENARIOS, to_values=_COAL_SCENARIOS,
+        reason=("leaving a NoCoal scenario drops the renewables-only village "
+                "electricity balance (optimizer.jl cVILElectricityBalance restricted "
+                "to inputs.VIL_RE) — the scenario flag is the sole gate on it"),
+    ),
+    TransitionRule(
+        key="scenario", tier=Tier.C,
+        from_values=_HIGH_IMPORT_SCENARIOS, to_values=_BASE_IMPORT_SCENARIOS,
+        reason=("leaving a high-import-price scenario silently reverts the x1.21 "
+                "import-price assumption the case is built on"),
+    ),
+]
+
 # The model's own CI regression case (.github/ci/maluku_dispatch.config.json) and
 # its headline numbers (tests/check_dispatch_headlines.jl, +-1 %). HiGHS, no
 # licence, minutes. 12.4 % unserved energy is *expected* on this dataset.
@@ -262,6 +310,10 @@ _STATUS_MARKERS: List[Tuple[str, str, Optional[str]]] = [
     ("Capacity expansion is infeasible", "INFEASIBLE", "solver"),
     ("Dispatch is infeasible", "INFEASIBLE", "solver"),
     ("did not solve. Termination status", "ERROR", "solver"),
+    # optimizer.jl build_model!: export_price > import_price on a dataset with no
+    # grid demand is refused outright (a fabricating configuration), after
+    # preflight has already printed its OK line.
+    ("on a dataset with NO grid demand", "ERROR", "preflight"),
 ]
 _PREFLIGHT_OK_MARKER = "Preflight checks passed"
 
@@ -468,6 +520,8 @@ class GarudaAdapter(Adapter):
             # Tier C — policy constraints; relaxing them changes the study.
             tier_c_keys=set(TIER_C_KEYS),
             allowed_values={k: list(v) for k, v in ALLOWED_VALUES.items()},
+            # Value-level: Tier B keys whose *relaxing* transition is policy-grade.
+            transition_rules=list(TRANSITION_RULES),
         )
 
     def locate_outputs(self, run_dir: Path) -> Dict[str, Path]:
@@ -815,8 +869,12 @@ def describe_schema() -> str:
     a("  base = grid layer only, no grid expansion, no site build; grid = grid "
       "expansion (network.csv) only; village = standalone site (village/industrial-"
       "park) build, no grid; gridvillage = coordinated grid + site build; "
-      "highimportprice = gridvillage with import price x1.21; nocoal = grid expansion "
-      "with coal banned; captive/gridcaptive = legacy aliases of village/gridvillage. "
+      "highimportprice = gridvillage with import price x1.21; nocoal = the same settings "
+      "as grid (grid expansion, no site build, base import price) plus the NoCoal flag, "
+      "whose ONLY modelled effect is to restrict the village/site electricity balance to "
+      "renewable village units (optimizer.jl cVILElectricityBalance over inputs.VIL_RE) — "
+      "it does NOT ban coal on the grid layer, where coal is still built and dispatched "
+      "exactly as in 'grid'; captive/gridcaptive = legacy aliases of village/gridvillage. "
       "village-type scenarios need the site_*/village_*/ip_* input tables (maluku has "
       "none; timor_demo and timor_belu do).")
     a("")
@@ -835,6 +893,11 @@ def describe_schema() -> str:
     a(f"  C human sign-off, never silent (POLICY levers): {sorted(TIER_C_KEYS)}")
     a("  island/year are not in any tier: changing the dataset is a study change, "
       "so a proposal on them defaults to Tier C.")
+    a("  Value-level escalations — a Tier B key whose *transition* is policy-grade and "
+      "therefore stops the loop for human sign-off:")
+    for rule in TRANSITION_RULES:
+        a(f"    {rule.key}: {rule.from_values} -> {rule.to_values} is Tier "
+          f"{rule.tier.value} — {rule.reason}. The reverse direction stays Tier B.")
     a("")
     a("ENGINE / SOLVER CHOICE AND COST: dispatch = LP on HiGHS, seconds to a few "
       "minutes on any island; expansion = MILP with exact unit commitment — ~25 min on "
@@ -852,7 +915,10 @@ def describe_schema() -> str:
       "errors ('Input data directory not found', 'missing required keys', 'Unknown "
       "scenario', 'Unknown clean flag', 'Input schema validation failed', 'could not start "
       "a working optimizer') -> ERROR(preflight). 'WARNING: export_price (...) > "
-      "import_price (...)' flags a configured arbitrage (an output-anomaly signal).")
+      "import_price (...)' flags a configured arbitrage (an output-anomaly signal) on a "
+      "dataset that has grid demand; on a dataset with NO grid demand the model instead "
+      "aborts with 'export_price (...) > import_price (...) on a dataset with NO grid "
+      "demand' (unless export_backed_by_generation is true) -> ERROR(preflight).")
     a("")
     a(f"OUTPUT CSVs (which appear depends on scenario/engine): {', '.join(RESULT_CSVS)}. "
       "Headline metrics: cost_results.Total_Costs ($M/yr), clean_energy_results."

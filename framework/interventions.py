@@ -39,6 +39,71 @@ class Tier(str, Enum):
         return self in (Tier.A, Tier.B)
 
 
+_TIER_ORDER: Dict[Tier, int] = {Tier.A: 0, Tier.B: 1, Tier.C: 2}
+
+
+def strictest(*tiers: Tier) -> Tier:
+    """The most restrictive of ``tiers`` (A < B < C)."""
+    return max(tiers, key=lambda t: _TIER_ORDER[t])
+
+
+@dataclass
+class TransitionRule:
+    """A *value-level* tier, for keys whose tier depends on which way they move.
+
+    A key's tier answers "may the agent touch this at all?", but for some keys
+    only one *direction* of change relaxes the study: tightening the knob is a
+    sanctioned parameter change while loosening the same knob removes a
+    modelled restriction (an "always feasible" fallback engine, a scenario flag
+    that is the sole gate on a constraint, shrinking the horizon an absolute
+    policy cap is written against). A rule escalates the tier of the matching
+    transitions only; every other move keeps the key's declared tier. Rules can
+    only make a change *stricter*, never laxer, so declaring one can never
+    downgrade a Tier C key.
+
+    Matching: ``from_values``/``to_values`` match by value (``None`` = any);
+    ``direction`` matches numeric moves ("decrease"/"increase");
+    ``when_config_keys`` restricts the rule to configs where at least one of
+    those keys is set to a non-null value (the cross-key case — the change is
+    only a relaxation while some policy key is active). Conditions combine with
+    AND.
+    """
+
+    key: str
+    tier: Tier = Tier.C
+    reason: str = ""
+    from_values: Optional[List[Any]] = None
+    to_values: Optional[List[Any]] = None
+    direction: Optional[str] = None            # "decrease" | "increase"
+    when_config_keys: Optional[List[str]] = None
+
+    def matches(self, change: "ProposedChange",
+                config: Optional[Dict[str, Any]] = None) -> bool:
+        if change.key != self.key:
+            return False
+        if self.from_values is not None and change.before not in self.from_values:
+            return False
+        if self.to_values is not None and change.after not in self.to_values:
+            return False
+        if self.direction is not None:
+            before, after = change.before, change.after
+            if isinstance(before, bool) or isinstance(after, bool):
+                return False
+            if not isinstance(before, (int, float)) or not isinstance(after, (int, float)):
+                return False
+            if self.direction == "decrease" and not after < before:
+                return False
+            if self.direction == "increase" and not after > before:
+                return False
+        if self.when_config_keys:
+            if config is None:
+                # No context: the rule cannot claim its condition holds.
+                return False
+            if not any(config.get(k) is not None for k in self.when_config_keys):
+                return False
+        return True
+
+
 @dataclass
 class InterventionSpec:
     """A model adapter's declaration of which config keys map to which tier."""
@@ -49,6 +114,18 @@ class InterventionSpec:
     # Optional enumerated legal values per key (e.g. the scenario enum). A
     # proposed value outside this set is rejected outright, regardless of tier.
     allowed_values: Dict[str, List[Any]] = field(default_factory=dict)
+    # Optional value-level escalations: transitions of an otherwise auto-applied
+    # key that are themselves policy-grade (see :class:`TransitionRule`).
+    transition_rules: List["TransitionRule"] = field(default_factory=list)
+
+    def transition_rule_for(self, change: "ProposedChange",
+                            config: Optional[Dict[str, Any]] = None
+                            ) -> Optional["TransitionRule"]:
+        """The strictest declared rule matching ``change`` in ``config``."""
+        matching = [r for r in self.transition_rules if r.matches(change, config)]
+        if not matching:
+            return None
+        return max(matching, key=lambda r: _TIER_ORDER[r.tier])
 
     def tier_for_key(self, key: str) -> Tier:
         if key in self.tier_c_keys:
@@ -83,8 +160,16 @@ class Decision:
         return not self.auto_apply and not self.rejected
 
 
-def decide(change: ProposedChange, spec: InterventionSpec) -> Decision:
-    """Classify a proposed change and rule on whether it may be auto-applied."""
+def decide(change: ProposedChange, spec: InterventionSpec,
+           config: Optional[Dict[str, Any]] = None) -> Decision:
+    """Classify a proposed change and rule on whether it may be auto-applied.
+
+    ``config`` is the config the change would be applied to. It is only read by
+    cross-key :class:`TransitionRule` conditions (``when_config_keys``); a rule
+    with such a condition never fires when the context is unknown, so callers
+    that enforce the guardrail (:func:`framework.refine.apply_refinements`)
+    always pass it.
+    """
     key = change.key
 
     # 1) Legality: an out-of-enum value is never applied, whatever its tier.
@@ -100,8 +185,27 @@ def decide(change: ProposedChange, spec: InterventionSpec) -> Decision:
             ),
         )
 
-    # 2) Tier classification.
-    tier = spec.tier_for_key(key)
+    # 2) Tier classification: the key's declared tier, escalated when this
+    #    particular transition is one the adapter gated by value.
+    key_tier = spec.tier_for_key(key)
+    rule = spec.transition_rule_for(change, config)
+    tier = key_tier if rule is None else strictest(key_tier, rule.tier)
+
+    if rule is not None and tier is not key_tier:
+        detail = rule.reason or (
+            f"moving it from {change.before!r} to {change.after!r} relaxes the study"
+        )
+        tail = ("; auto-applied with a flag."
+                if tier.auto_applies else
+                "; auto-apply refused — human sign-off required.")
+        return Decision(
+            tier=tier,
+            auto_apply=tier.auto_applies,
+            rejected=False,
+            reason=(f"{key!r} is declared Tier {key_tier.value}, but {detail} "
+                    f"(Tier {tier.value} transition){tail}"),
+        )
+
     if tier is Tier.A:
         reason = f"{key!r} is a numeric/solver setting (Tier A); auto-applied."
     elif tier is Tier.B:

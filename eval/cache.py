@@ -27,6 +27,12 @@ from framework.interventions import InterventionSpec
 from framework.run_record import Execution, RunRecord, config_hash
 
 CACHEABLE_STATUSES = {"OPTIMAL", "INFEASIBLE", "TIME_LIMIT"}
+#: ERROR origins that are a deterministic property of the *config*: the adapter's
+#: own validation ("preflight") and the solver's verdict ("solver"). "runtime"
+#: and "environment" are excluded on purpose — a crash may be transient, and an
+#: environment failure (a missing interpreter, an un-importable model package)
+#: stops being true the moment the machine is fixed, while the cache key is the
+#: config hash alone and would otherwise replay the failure forever.
 CACHEABLE_ERROR_ORIGINS = {"preflight", "solver"}
 RECORD_NAME = "run_record.json"
 MARKER_NAME = "cache_hit.json"

@@ -341,6 +341,17 @@ Two safety defaults worth knowing:
   auto-apply it. The safe default is "don't silently touch anything unsanctioned."
 - **Illegal values are rejected outright.** Proposing `scenario: frobnicate` (not in
   the allowed list) is rejected before anything runs, regardless of tier.
+- **Some Tier B keys are policy-grade in one direction.** A key's tier answers "may
+  the agent touch this at all?", but a few sanctioned choices *remove a modelled
+  restriction* when moved one way. An adapter can declare those transitions as
+  *value-level escalations* (`transition_rules` on its intervention spec): the
+  relaxing direction is treated as Tier C and stops the loop for you, while the
+  tightening direction stays auto-applied. Two are in force today: on garuda,
+  leaving the `nocoal` or `highimportprice` scenario for one without that
+  restriction; on pypsa_toy, shortening `snapshots_days` or lowering
+  `demand_scale` while a `co2_cap_t` is set (the cap is absolute over the
+  horizon, so shrinking the horizon would make it non-binding). A rule can only
+  make a change stricter — it can never downgrade a Tier C key.
 
 Every proposal — applied, blocked, or rejected — is written into the run's audit
 trail (`refinement_history` in `run_record.json`), with the before/after value and
@@ -387,7 +398,7 @@ the authoritative, live description for the active model, run
 | `grid` | yes | no | grid expansion only |
 | `village` | no | yes | standalone village systems |
 | `gridvillage` | yes | yes | coordinated grid + village |
-| `nocoal` | yes | no | coal banned |
+| `nocoal` | yes | no | same as `grid`, plus the `NoCoal` flag — its only modelled effect is to restrict the **village** electricity balance to renewable village units; grid-layer coal is *not* banned |
 | `highimportprice` | yes | yes | higher village import price |
 | `captive`, `gridcaptive` | — | — | legacy aliases for `village` / `gridvillage` |
 

@@ -41,7 +41,9 @@ The generalizable, publishable artifacts are deliberately kept model-agnostic:
    `framework/refine.py`) — the scientific-integrity guardrail. A change is
    Tier A (numeric → auto), Tier B (sanctioned parameter → auto + flag), or
    Tier C (relaxes a policy constraint → **human sign-off, never silent**).
-   Unknown keys default to Tier C.
+   Unknown keys default to Tier C, and an adapter can escalate a *relaxing
+   transition* of a Tier B key to C (`transition_rules`) so that, for example,
+   leaving a no-coal scenario is never auto-applied.
 3. **A thin adapter interface** (`framework/adapter.py`) — five methods a model
    implements to plug in — plus an **adapter registry** (`framework/registry.py`)
    so the skills resolve the *active* adapter (`get_adapter()`) and never name a

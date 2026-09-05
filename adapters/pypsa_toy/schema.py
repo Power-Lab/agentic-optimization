@@ -51,7 +51,11 @@ KEY_SPECS: List[KeySpec] = [
         "means no cap. POLICY LEVER: relaxing it changes the study's claim. "
         "Physical floor: the existing coal unit is must-run at 20 % of 300 MW, "
         "so emissions cannot go below ~1289 t/day (see describe_config); any cap "
-        "below that floor is infeasible for EVERY choice of the other keys.",
+        "below that floor is infeasible for EVERY choice of the other keys. The cap is "
+        "ABSOLUTE over the horizon, not per day, so it is scaled by the keys that size "
+        "the problem: shrinking snapshots_days or demand_scale lowers the emissions the "
+        "cap has to bind, which is why those two moves are Tier C while a cap is set "
+        "(see TRANSITION_RULES in pypsa_adapter.py).",
         minimum=0.0,
     ),
     KeySpec(
@@ -76,7 +80,9 @@ KEY_SPECS: List[KeySpec] = [
     KeySpec(
         "demand_scale", "B", "float", 1.0,
         "Multiplier on every bus's demand profile (base peak ~1000 MW system-"
-        "wide: north 500, east 300, south 200). Legal range 0.25..10.",
+        "wide: north 500, east 300, south 200). Legal range 0.25..10. LOWERING it "
+        "while co2_cap_t is set is Tier C: the absolute cap is written against the "
+        "study's demand, so scaling demand down loosens the cap instead of meeting it.",
         minimum=0.25, maximum=10.0,
     ),
     KeySpec(
@@ -123,7 +129,10 @@ KEY_SPECS: List[KeySpec] = [
         "snapshots_days", "B", "int", 14,
         "Number of days of hourly snapshots, 1..14 (14 = 336 h). Day k of a "
         "shorter horizon is identical to day k of the full 14-day series, so "
-        "1-day runs are a strict subset (useful for fast tests).",
+        "1-day runs are a strict subset (useful for fast tests). SHORTENING it while "
+        "co2_cap_t is set is Tier C: the cap is absolute over the horizon, so a shorter "
+        "horizon makes the same cap non-binding and turns the study into a different, "
+        "shorter one.",
         minimum=1, maximum=MAX_DAYS, enum=SNAPSHOT_DAYS_ENUM,
     ),
     # ---- Tier A: numerics ---------------------------------------------------

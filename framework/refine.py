@@ -96,7 +96,9 @@ def apply_refinements(
         # Ensure 'before' reflects the actual current value.
         before = next_config.get(p.key, p.before)
         change = ProposedChange(key=p.key, before=before, after=p.after)
-        decision = decide(change, spec)
+        # The config is passed so cross-key transition rules (a horizon change
+        # while a policy cap is set, say) can see the context they are about.
+        decision = decide(change, spec, config=next_config)
 
         proposer_rationale = str(getattr(p, "rationale", "") or "")
         rationale = decision.reason

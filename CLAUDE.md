@@ -88,6 +88,17 @@ Every config key belongs to exactly one tier, declared by the adapter's
   returns `needs_human`.
 - **Unknown keys default to Tier C**, so a model the framework has never seen
   fails safe.
+- **A tier can be escalated per value transition.** Some keys are Tier B as a
+  *choice* but policy-grade in one direction: a scenario value that is the sole
+  gate on a modelled restriction (garuda's `nocoal` / `highimportprice`), or
+  shrinking the horizon or the demand an *absolute* policy cap is written
+  against (pypsa_toy's `snapshots_days` / `demand_scale` while `co2_cap_t` is
+  set). Adapters declare these as
+  `InterventionSpec.transition_rules` (`framework.interventions.TransitionRule`,
+  optionally conditioned on another key being set); `decide()` takes the
+  stricter of the key's tier and any matching rule, so the relaxing direction
+  stops the loop while the tightening one stays auto-applied. A rule can only
+  make a change stricter — it can never downgrade a Tier C key.
 
 An infeasible run whose only fix is Tier C is a *result*, not a failure. Report
 the trade-off; do not go looking for a way to make it solve. Never edit a policy

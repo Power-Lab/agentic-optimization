@@ -366,6 +366,15 @@ class AgentDriver:
             "C_policy_human_sign_off": sorted(spec.tier_c_keys),
             "unknown_keys": "treated as Tier C",
             "allowed_values": dict(spec.allowed_values),
+            # Value-level escalations: transitions of an otherwise auto-applied
+            # key that the adapter gated at a stricter tier.
+            "value_level_escalations": [
+                {"key": r.key, "tier": r.tier.value,
+                 "from": r.from_values, "to": r.to_values,
+                 "direction": r.direction, "only_when_set": r.when_config_keys,
+                 "why": r.reason}
+                for r in spec.transition_rules
+            ],
         }
 
     def system_prompt(self, role: str) -> str:

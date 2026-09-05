@@ -323,7 +323,10 @@ def test_parse_status_ignores_a_bogus_marker_value():
     ("Model   status      : Infeasible", ("INFEASIBLE", "solver")),
     ("Model   status      : Time limit reached", ("TIME_LIMIT", None)),
     ("Solving LP ...\nModel   status      : Optimal", ("OPTIMAL", None)),
-    ("ModuleNotFoundError: No module named 'pypsa'", ("ERROR", "preflight")),
+    # An un-importable model package is an ENVIRONMENT failure, not a config
+    # one: eval.cache.default_cacheable must refuse to cache it (a cached
+    # ERROR would replay forever once pypsa is installed).
+    ("ModuleNotFoundError: No module named 'pypsa'", ("ERROR", "environment")),
     ("Traceback (most recent call last):\n  ...\nValueError: nope", ("ERROR", "runtime")),
 ])
 def test_parse_status_fallback_tokens(text, expected):
@@ -1174,3 +1177,38 @@ def test_preflight_notes_fire_for_the_fixtures_that_advertise_them():
             json.loads((FIXTURES / name / "config.json").read_text()))
         notes = runner.preflight_notes(cfg, horizon_summary(cfg))
         assert any(n.startswith("WARNING") and fragment in n for n in notes), (name, notes)
+
+
+def test_missing_pypsa_is_not_a_cacheable_error():
+    """ERROR/environment must never be stored by the solve cache."""
+    from eval.cache import default_cacheable
+    from framework.run_record import Execution
+
+    status, origin = _parse("ModuleNotFoundError: No module named 'pypsa'", 1)
+    assert (status, origin) == ("ERROR", "environment")
+    assert default_cacheable(Execution(termination_status=status, error_origin=origin)) is False
+    # the config-deterministic origins are still cached
+    assert default_cacheable(Execution(termination_status="ERROR", error_origin="preflight")) is True
+    assert default_cacheable(Execution(termination_status="INFEASIBLE", error_origin="solver")) is True
+
+
+def test_shrinking_the_horizon_under_a_carbon_cap_is_tier_c():
+    """snapshots_days is Tier B, but shortening it while co2_cap_t is set makes
+    the absolute cap non-binding — that transition must stop the loop."""
+    from framework.interventions import ProposedChange, Tier, decide
+    from adapters.pypsa_toy import PypsaToyAdapter
+
+    spec = PypsaToyAdapter().intervention_spec()
+    capped = {"co2_cap_t": 10000.0, "snapshots_days": 14, "demand_scale": 1.0}
+
+    d = decide(ProposedChange("snapshots_days", 14, 1), spec, config=capped)
+    assert d.tier is Tier.C and not d.auto_apply and d.blocked_for_human
+    d = decide(ProposedChange("demand_scale", 1.0, 0.25), spec, config=capped)
+    assert d.tier is Tier.C and not d.auto_apply
+
+    # tightening directions stay Tier B ...
+    assert decide(ProposedChange("snapshots_days", 1, 14), spec, config=capped).tier is Tier.B
+    assert decide(ProposedChange("demand_scale", 1.0, 2.0), spec, config=capped).tier is Tier.B
+    # ... and with no cap in force there is nothing to relax
+    uncapped = {"co2_cap_t": None, "snapshots_days": 14}
+    assert decide(ProposedChange("snapshots_days", 14, 1), spec, config=uncapped).auto_apply

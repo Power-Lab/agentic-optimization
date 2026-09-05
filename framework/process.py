@@ -278,10 +278,18 @@ def stream_command(
         # Grandchildren may hold the pipe open after the child died; do not
         # hang forever on them (killpg above normally takes them down too).
         reader.join(timeout=max(1.0, grace_seconds))
-        try:
-            proc.stdout.close()
-        except OSError:
+        if reader.is_alive():
+            # The reader is still parked inside readline() because a grandchild
+            # kept the write end open. It holds the BufferedReader's lock, so
+            # closing the pipe here would block the main thread forever (the
+            # join timeout above exists precisely to avoid hanging). Leave the
+            # pipe to the daemon thread and to interpreter shutdown.
             pass
+        else:
+            try:
+                proc.stdout.close()
+            except OSError:
+                pass
         if log_fh is not None:
             log_fh.close()
         if pid_path is not None:

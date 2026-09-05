@@ -38,7 +38,10 @@ class Execution:
     mipgap_reached: Optional[float] = None
     solver_log: Optional[str] = None  # path to captured solver.log, relative to run dir
     returncode: Optional[int] = None
-    error_origin: Optional[str] = None  # "preflight" | "solver" | "runtime" | None
+    # "preflight" (the adapter's own config validation) | "solver" | "runtime"
+    # | "environment" (a missing interpreter/package — a property of the
+    # machine, never cached by eval.cache) | None
+    error_origin: Optional[str] = None
     # Rolling summary from the live run monitor (framework.monitor.RunMonitor
     # .summary()): phase, best_obj, bound, last_gap, warnings, stalled, ...
     # None for records written before monitoring existed or by adapters that

@@ -32,7 +32,7 @@ FAMILIES = (
 TERMINAL_OUTCOMES = ("solved", "needs_human", "flagged")
 STATUSES = ("OPTIMAL", "INFEASIBLE", "TIME_LIMIT", "ERROR")
 TIERS = ("A", "B", "C")
-ERROR_ORIGINS = ("preflight", "solver", "runtime")
+ERROR_ORIGINS = ("preflight", "solver", "runtime", "environment")
 SOLVERS = ("highs", "gurobi", "none")
 
 

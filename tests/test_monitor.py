@@ -1442,3 +1442,32 @@ def test_watch_tail_handles_partial_lines_and_truncation(tmp_path):
     path.write_text("z\n")                        # rewritten shorter: start over
     assert tail.read_new_lines() == ["z"]
     assert tail.read_new_lines() == []
+
+
+# A child that leaves a grandchild holding its stdout open, then exits. The
+# reader thread stays parked in readline(); stream_command must not block on it.
+CHILD_LEAKS_STDOUT = (
+    "import subprocess, sys; "
+    "subprocess.Popen([sys.executable, '-u', '-c', 'import time; time.sleep(30)']); "
+    "print('child done', flush=True)"
+)
+
+
+def test_stream_command_returns_when_a_grandchild_holds_stdout_open(tmp_path):
+    """Regression: closing the pipe from the main thread while the reader is
+    blocked inside readline() deadlocked stream_command forever."""
+    box: dict = {}
+
+    def go():
+        box["result"] = stream_command(python_child(CHILD_LEAKS_STDOUT),
+                                       log_path=tmp_path / "solver.log",
+                                       grace_seconds=1.0)
+
+    t = threading.Thread(target=go, daemon=True)
+    t.start()
+    t.join(timeout=20)
+    assert not t.is_alive(), "stream_command deadlocked on a leaked stdout pipe"
+    result = box["result"]
+    assert result.returncode == 0 and not result.timed_out and not result.aborted
+    assert "child done" in (tmp_path / "solver.log").read_text()
+    assert not (tmp_path / "run.pid").exists()

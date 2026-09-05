@@ -38,7 +38,7 @@ from types import SimpleNamespace
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 from framework.adapter import Adapter, ValidationResult
-from framework.interventions import InterventionSpec
+from framework.interventions import InterventionSpec, Tier, TransitionRule
 from framework.run_record import Execution
 
 try:  # the framework's streamer: tee + ticks + abort file, shared by all adapters
@@ -84,8 +84,11 @@ _FALLBACK_TOKENS: List[Tuple[str, str, Optional[str]]] = [
     ("time limit reached", "TIME_LIMIT", None),
     ("termination condition: optimal", "OPTIMAL", None),
     ("model   status      : optimal", "OPTIMAL", None),
-    ("modulenotfounderror: no module named 'pypsa'", "ERROR", "preflight"),
-    ("modulenotfounderror", "ERROR", "runtime"),
+    # A missing module is an ENVIRONMENT failure, not a config/preflight one: it
+    # says nothing about this config and it stops being true the moment the
+    # interpreter is fixed, so eval/cache.py must never cache it.
+    ("modulenotfounderror: no module named 'pypsa'", "ERROR", "environment"),
+    ("modulenotfounderror", "ERROR", "environment"),
     ("traceback (most recent call last)", "ERROR", "runtime"),
 ]
 
@@ -99,7 +102,8 @@ def default_python() -> str:
     ``PYPSA_PYTHON`` wins; otherwise the first existing candidate; otherwise
     the interpreter running the framework (which may lack pypsa — the runner
     then exits with a clear ``ModuleNotFoundError`` that
-    :meth:`PypsaToyAdapter._parse_status` maps to ERROR/preflight)."""
+    :meth:`PypsaToyAdapter._parse_status` maps to ERROR/**environment**, an
+    origin the solve cache deliberately never stores)."""
     env = os.environ.get("PYPSA_PYTHON")
     if env:
         return env
@@ -107,6 +111,31 @@ def default_python() -> str:
         if candidate.is_file() and os.access(candidate, os.X_OK):
             return str(candidate)
     return sys.executable
+
+
+# ---- value-level escalations ------------------------------------------------
+# co2_cap_t is an ABSOLUTE cap over the modelled horizon, at the modelled demand.
+# The Tier B keys that size the problem therefore rescale the quantity the Tier C
+# cap bounds: shrinking either one makes an infeasible cap non-binding without
+# ever touching a policy key. Those directions are Tier C while a cap is set; the
+# tightening directions (a longer horizon, more demand) stay auto-applied.
+_CAP_KEYS = ["co2_cap_t"]
+
+TRANSITION_RULES: List[TransitionRule] = [
+    TransitionRule(
+        key="snapshots_days", tier=Tier.C, direction="decrease",
+        when_config_keys=list(_CAP_KEYS),
+        reason=("co2_cap_t is absolute over the horizon, so shortening the horizon "
+                "loosens the cap rather than meeting it — the answer would be a "
+                "shorter study reported as the original one"),
+    ),
+    TransitionRule(
+        key="demand_scale", tier=Tier.C, direction="decrease",
+        when_config_keys=list(_CAP_KEYS),
+        reason=("co2_cap_t is absolute at the study's demand, so scaling demand down "
+                "loosens the cap rather than meeting it"),
+    ),
+]
 
 
 class PypsaToyAdapter(Adapter):
@@ -230,6 +259,9 @@ class PypsaToyAdapter(Adapter):
             # study claims, so the framework refuses to do it silently.
             tier_c_keys=set(TIER_C_KEYS),
             allowed_values={k: list(v) for k, v in ALLOWED_VALUES.items()},
+            # Value-level: shrinking the problem an absolute policy cap is
+            # written against is itself a policy relaxation.
+            transition_rules=list(TRANSITION_RULES),
         )
 
     def locate_outputs(self, run_dir: Path) -> Dict[str, Path]:
@@ -477,6 +509,12 @@ def describe_schema() -> str:
     add("  - The must-run coal unit emits ~1,289 t CO2 per modelled day whatever else")
     add("    happens (60 MW_el / 0.38 x 0.34 x 24 h). A co2_cap_t below")
     add("    snapshots_days x 1,289 t is unreachable by ANY Tier-A or Tier-B change.")
+    add("  - co2_cap_t is ABSOLUTE over the horizon and at the configured demand, so")
+    add("    shortening snapshots_days or lowering demand_scale makes the SAME cap")
+    add("    non-binding. Those two moves are therefore Tier C whenever co2_cap_t is")
+    add("    set (value-level escalation); raising either stays Tier B. Making an")
+    add("    infeasible cap 'solve' that way answers a smaller question than the one")
+    add("    asked, and must be escalated rather than applied.")
     add("  - Wind (<=600 MW) and solar (<=800 MW) technical potential sums to ~56 % of")
     add("    default demand over 14 days (~50 % over 1 day, ~65 % over 7). Above that,")
     add("    a re_share_min is unreachable however cheap the capex keys are made; and")
@@ -494,7 +532,10 @@ def describe_schema() -> str:
     add("(an interpreter with pypsa, linopy and highspy). The child prints")
     add("`[pypsa_toy] status: OPTIMAL|INFEASIBLE|TIME_LIMIT|ERROR` and, on a failure,")
     add("`[pypsa_toy] error_origin: preflight|solver|runtime`, alongside the raw HiGHS")
-    add("log. A 14-day solve takes ~1-3 s; a 1-day solve well under a second — so a")
+    add("log. An interpreter without pypsa never reaches that marker: the")
+    add("ModuleNotFoundError is reported as ERROR/environment (never cached, since it")
+    add("is a property of the machine and not of the config).")
+    add("A 14-day solve takes ~1-3 s; a 1-day solve well under a second — so a")
     add("TIME_LIMIT here only ever comes from an absurdly small time_limit.")
     add("")
     add("OUTPUTS (CSV, archived in <run_dir>/outputs/):")
