@@ -4,3 +4,4 @@
 [submodule "models/garuda"]
 	path = models/garuda
 	url = https://github.com/kaarthi19/garuda.git
+	branch = server-results
