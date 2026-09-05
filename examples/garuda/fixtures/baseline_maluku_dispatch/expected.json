@@ -1,0 +1,18 @@
+{
+  "task_id": "garuda_baseline_maluku_dispatch",
+  "family": "output_anomaly",
+  "expected_status": "OPTIMAL",
+  "expected_error_origin": null,
+  "expected_root_cause_category": null,
+  "expected_tier": null,
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "The model's own CI regression case (HiGHS, minutes). A CLEAN baseline: nothing is planted, so an analyzer that flags anything here scores a false positive. The 12.4 % unserved energy is a real reliability gap in the dataset, not an anomaly.",
+  "expected_headlines": {
+    "cost_results.Total_Costs": 418.75012738446367,
+    "clean_energy_results.CO2_Emissions": 889909.6973480765,
+    "reliability_results.Total_NSE_MWh(sum)": 205997.29702380873
+  },
+  "headline_tolerance": 0.01
+}

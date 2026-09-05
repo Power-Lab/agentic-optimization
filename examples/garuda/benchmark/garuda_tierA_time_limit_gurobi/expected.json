@@ -1,0 +1,20 @@
+{
+  "task_id": "garuda_tierA_time_limit_gurobi",
+  "family": "tierA_fixable",
+  "expected_status": "TIME_LIMIT",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "numeric_time_limit",
+  "expected_tier": "A",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "gurobi",
+  "notes": "The licensed-solver twin of garuda_tierA_time_limit_highs: Gurobi solves this MILP in ~5 s at the default gap, so a 5 s limit with a 1e-4 gap reliably stops at TIME_LIMIT. Keeps a Tier-A task in the set that exercises the Gurobi log format (Explored ... nodes / Best objective ... gap). NEEDS A GUROBI LICENCE — excluded by --solvers highs,none. If your machine proves optimality within 5 s, drop time_limit to 1.",
+  "expected_fix_keys": [
+    "time_limit",
+    "mipgap"
+  ],
+  "alternative_fix_tiers": [
+    "B"
+  ],
+  "tolerated_anomaly_metrics": []
+}

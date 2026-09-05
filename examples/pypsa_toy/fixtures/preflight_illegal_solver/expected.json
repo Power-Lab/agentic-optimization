@@ -1,0 +1,16 @@
+{
+  "task_id": "pypsa_toy_preflight_illegal_solver",
+  "family": "preflight_error",
+  "expected_status": "ERROR",
+  "expected_error_origin": "preflight",
+  "expected_root_cause_category": "config_value_out_of_enum",
+  "expected_tier": "A",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "solver = 'gurobi' is outside this adapter's enum - the toy is a pure LP and only the licence-free HiGHS backend is wired up. This is the benign preflight case: 'solver' is a declared Tier-A key with an allowed_values list, so setting it back to 'highs' is legal, automatic and changes nothing about the problem being solved. The run then behaves like the baseline. Contrast with preflight_bad_key, where the offending key is unknown and therefore Tier C.",
+  "expected_fix_keys": [
+    "solver"
+  ],
+  "root_cause_contains": "not in the legal set"
+}

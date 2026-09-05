@@ -1,0 +1,10 @@
+{
+  "year": 2060,
+  "optimization_days": 3,
+  "optimization_step": 30,
+  "emission_target": "2C",
+  "ccs_start_year": 2070,
+  "emission_cap_override_mt": -1000000.0,
+  "with_shedding": 0,
+  "res_tag": "tierC_negative_cap"
+}

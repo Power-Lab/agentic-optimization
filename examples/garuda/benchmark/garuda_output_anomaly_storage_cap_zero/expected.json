@@ -1,0 +1,17 @@
+{
+  "task_id": "garuda_output_anomaly_storage_cap_zero",
+  "family": "output_anomaly",
+  "expected_status": "OPTIMAL",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "storage_cap_too_low",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "flagged",
+  "planted_anomaly_metric": "Total_Storage_MWh",
+  "needs_solver": "highs",
+  "notes": "PLANTED: the per-site storage energy cap is 0 MWh, so the standalone village build cannot pair solar with a battery and collapses to solar + diesel. The run solves (LP-relaxed expansion, minutes on HiGHS) but site_storage_results.Total_Storage_MWh is exactly 0 at every site and the diesel share of site generation is implausibly high. Fix = raise village_storage_max_mwh back to the default 208 (Tier B).",
+  "expected_fix_keys": [
+    "village_storage_max_mwh"
+  ],
+  "alternative_fix_tiers": [],
+  "tolerated_anomaly_metrics": []
+}

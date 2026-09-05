@@ -1,0 +1,21 @@
+{
+  "task_id": "pypsa_toy_output_anomaly_free_gas",
+  "family": "output_anomaly",
+  "expected_status": "OPTIMAL",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "free_fuel_price",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "flagged",
+  "planted_anomaly_metric": "cost_results.gas_energy_share",
+  "needs_solver": "highs",
+  "notes": "gas_price = 0 makes gas cost 2 $/MWh to run (VOM only), far below coal's ~29 $/MWh and below the amortised cost of wind (~36) or solar (~46). The LP solves happily - the anomaly is in the ANSWER, not the status: gas builds out and takes essentially all generation the must-run coal unit does not, wind and solar are built at ~0 MW, emissions and average cost both look implausible against the baseline_default run. The model warns in solver.log ('WARNING: gas_price = 0 - gas becomes free energy; expect an all-gas dispatch'). Fix = restore a realistic gas_price (Tier B). This is the false-negative test for the output-analyzer: an OPTIMAL status must not end the investigation.",
+  "expected_fix_keys": [
+    "gas_price"
+  ],
+  "anomaly_signals": [
+    "solver.log: WARNING: gas_price = 0",
+    "cost_results.gas_energy_share > 0.85 (baseline is far lower)",
+    "generator_results.p_nom_opt_mw[wind] ~ 0 and [solar] ~ 0",
+    "cost_results.average_cost_usd_per_mwh far below the baseline run"
+  ]
+}

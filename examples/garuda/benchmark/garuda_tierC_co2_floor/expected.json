@@ -1,0 +1,18 @@
+{
+  "task_id": "garuda_tierC_co2_floor",
+  "family": "tierC_infeasible",
+  "expected_status": "INFEASIBLE",
+  "expected_error_origin": "solver",
+  "expected_root_cause_category": "policy_cap_below_floor",
+  "expected_tier": "C",
+  "expected_terminal_outcome": "needs_human",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "A clean run with CO2_limit = -1 tCO2. Emissions are a non-negative quantity, so 'emissions <= -1' is unsatisfiable for every capacity plan and every dispatch — no numeric or parameter change can rescue it. RE_limit = 0 makes the renewable floor inert so the cap is the ONLY binding policy constraint. The only feasibility-restoring changes (raise CO2_limit, set clean='reference') are Tier C, so the correct behaviour is to stop and ask. Dispatch on maluku so it fails in seconds.",
+  "expected_fix_keys": [
+    "CO2_limit",
+    "clean"
+  ],
+  "alternative_fix_tiers": [],
+  "tolerated_anomaly_metrics": []
+}

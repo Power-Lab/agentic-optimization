@@ -1,0 +1,10 @@
+{
+  "year": 2060,
+  "optimization_days": 3,
+  "optimization_step": 30,
+  "emission_target": "2C",
+  "ccs_start_year": 2040,
+  "demand_scale": 3.0,
+  "with_shedding": 0,
+  "res_tag": "tierB_demand_scale"
+}

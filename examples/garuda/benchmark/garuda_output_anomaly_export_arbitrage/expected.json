@@ -1,0 +1,17 @@
+{
+  "task_id": "garuda_output_anomaly_export_arbitrage",
+  "family": "output_anomaly",
+  "expected_status": "OPTIMAL",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "export_price_arbitrage",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "flagged",
+  "planted_anomaly_metric": "Village_Export_Revenue",
+  "needs_solver": "highs",
+  "notes": "PLANTED: export_price (100 $/MWh) above import_price (59 $/MWh) on a coupled grid+village dispatch. The run is genuinely OPTIMAL, but a connected site now profits from importing and immediately re-exporting, bounded only by the interconnection cap: cost_results.Village_Export_Revenue is large where a sane run has ~0, and site_connection_results shows Total_Export_MWh tracking Total_Import_MWh. run_model.jl also prints 'WARNING: export_price (...) > import_price (...)' into solver.log. Fix = lower export_price (Tier B); export_backed_by_generation would also stop the wash trade but is a policy rule (Tier C).",
+  "expected_fix_keys": [
+    "export_price"
+  ],
+  "alternative_fix_tiers": [],
+  "tolerated_anomaly_metrics": []
+}

@@ -1,7 +1,8 @@
 """The guardrail is the research contribution, so it gets the strictest tests.
 
 These run without a solver — they pin the tiered-intervention behaviour that the
-refiner skill is forbidden from bypassing.
+refiner skill is forbidden from bypassing, against the garuda adapter's
+modeler-approved tier declaration.
 """
 
 import pytest
@@ -12,39 +13,90 @@ from framework import (
     apply_refinements,
     decide,
 )
-from adapters.village import VillageAdapter
+from adapters.garuda import GarudaAdapter
 
-SPEC = VillageAdapter().intervention_spec()
+SPEC = GarudaAdapter().intervention_spec()
 
 
 def _record():
     return RunRecord(config={
         "island": "maluku", "year": "2030", "scenario": "base",
-        "clean": "reference", "CO235reduction": False,
-        "BAUCO2emissions": 0.0, "CO2_limit": 5820000,
+        "clean": "clean", "CO235reduction": False,
+        "BAUCO2emissions": 0.0, "CO2_limit": 5_820_000,
+        "engine": "dispatch", "solver": "highs",
     })
+
+
+# ---- the declaration itself ------------------------------------------------
+
+def test_tier_declaration_is_the_approved_one():
+    assert SPEC.tier_a_keys == {"mipgap", "time_limit", "solver", "lp_method", "run_tag"}
+    assert SPEC.tier_b_keys == {"scenario", "engine", "relax_uc", "exact_connect",
+                                "import_price", "export_price", "village_storage_max_mwh",
+                                "battery_duration_h"}
+    assert SPEC.tier_c_keys == {"clean", "CO2_limit", "RE_limit", "CO235reduction",
+                                "BAUCO2emissions", "policy_scope",
+                                "export_backed_by_generation"}
+    assert set(SPEC.allowed_values) == {"scenario", "clean", "engine", "solver",
+                                        "policy_scope", "lp_method"}
+    assert SPEC.allowed_values["engine"] == ["expansion", "dispatch"]
+    assert SPEC.allowed_values["solver"] == ["highs", "gurobi"]
+    assert SPEC.allowed_values["policy_scope"] == ["grid", "system"]
+    assert SPEC.allowed_values["lp_method"] == list(range(-1, 6))
+    assert set(SPEC.allowed_values["scenario"]) == {
+        "base", "grid", "village", "gridvillage", "highimportprice", "nocoal",
+        "captive", "gridcaptive"}
+    assert SPEC.allowed_values["clean"] == ["reference", "clean"]
+    # no key sits in two tiers
+    assert not (SPEC.tier_a_keys & SPEC.tier_b_keys)
+    assert not (SPEC.tier_b_keys & SPEC.tier_c_keys)
+    assert not (SPEC.tier_a_keys & SPEC.tier_c_keys)
 
 
 # ---- classification --------------------------------------------------------
 
 @pytest.mark.parametrize("key,after,tier,auto", [
     ("mipgap", 0.05, "A", True),                 # numeric → auto
-    ("import_price", 80.0, "B", True),           # sanctioned param → auto
+    ("time_limit", 3600.0, "A", True),
+    ("solver", "gurobi", "A", True),             # within enum → auto
+    ("lp_method", 2, "A", True),
+    ("run_tag", "sweep1", "A", True),
+    ("import_price", 80.0, "B", True),           # sanctioned param → auto + flag
+    ("export_price", 0.0, "B", True),
     ("village_storage_max_mwh", 400.0, "B", True),
+    ("battery_duration_h", 4.0, "B", True),
     ("scenario", "nocoal", "B", True),           # within enum → auto
+    ("engine", "expansion", "B", True),
+    ("relax_uc", True, "B", True),
+    ("exact_connect", True, "B", True),
     ("CO2_limit", 9_000_000, "C", False),        # policy → blocked
     ("RE_limit", 0.1, "C", False),               # policy → blocked
-    ("clean", "clean", "C", False),              # policy lever → blocked
+    ("clean", "reference", "C", False),          # policy lever → blocked
+    ("CO235reduction", False, "C", False),
+    ("BAUCO2emissions", 1.0, "C", False),
+    ("policy_scope", "system", "C", False),
+    ("export_backed_by_generation", False, "C", False),
+    ("island", "sumatera", "C", False),          # dataset choice: no tier → C
+    ("year", "2035", "C", False),
     ("made_up_key", 1, "C", False),              # unknown → defaults to C
 ])
 def test_classification(key, after, tier, auto):
     d = decide(ProposedChange(key, None, after), SPEC)
     assert d.tier.value == tier
     assert d.auto_apply is auto
+    assert d.rejected is False
 
 
-def test_illegal_enum_value_is_rejected():
-    d = decide(ProposedChange("scenario", "base", "frobnicate"), SPEC)
+@pytest.mark.parametrize("key,after", [
+    ("scenario", "frobnicate"),
+    ("solver", "cplex"),
+    ("engine", "simulation"),
+    ("policy_scope", "national"),
+    ("lp_method", 7),
+    ("clean", "dirty"),
+])
+def test_illegal_enum_value_is_rejected(key, after):
+    d = decide(ProposedChange(key, None, after), SPEC)
     assert d.rejected is True
     assert d.auto_apply is False
 
@@ -69,6 +121,16 @@ def test_tier_c_policy_relaxation_is_blocked_not_applied():
     assert rec.refinement_history[-1].applied is False
 
 
+def test_dropping_the_clean_run_is_also_blocked():
+    # 'clean' -> 'reference' switches the policy constraints off: same harm as
+    # relaxing the cap, so it must halt for a human even though it is in-enum.
+    rec = _record()
+    outcome = apply_refinements(rec, [ProposedChange("clean", "clean", "reference")], SPEC)
+    assert outcome.next_config["clean"] == "clean"
+    assert outcome.needs_human
+    assert not outcome.applied and not outcome.rejected
+
+
 def test_tier_a_is_applied_to_next_config():
     rec = _record()
     outcome = apply_refinements(rec, [ProposedChange("mipgap", None, 0.05)], SPEC)
@@ -79,27 +141,44 @@ def test_tier_a_is_applied_to_next_config():
     assert "mipgap" not in rec.config
 
 
+def test_tier_b_is_applied_and_flagged_in_audit_trail():
+    rec = _record()
+    outcome = apply_refinements(rec, [ProposedChange("engine", "dispatch", "expansion")], SPEC)
+    assert outcome.next_config["engine"] == "expansion"
+    assert not outcome.needs_human
+    assert outcome.applied[0].tier == "B"
+    assert rec.refinement_history[-1].tier == "B"
+    assert rec.refinement_history[-1].applied is True
+
+
 def test_mixed_batch_applies_safe_blocks_policy():
     rec = _record()
     outcome = apply_refinements(rec, [
-        ProposedChange("mipgap", None, 0.05),         # A → applied
+        ProposedChange("time_limit", None, 600.0),    # A → applied
         ProposedChange("import_price", None, 90.0),   # B → applied
         ProposedChange("CO2_limit", None, 9e9),       # C → blocked
+        ProposedChange("solver", "highs", "cplex"),   # illegal → rejected
     ], SPEC)
-    assert outcome.next_config["mipgap"] == 0.05
+    assert outcome.next_config["time_limit"] == 600.0
     assert outcome.next_config["import_price"] == 90.0
     assert outcome.next_config["CO2_limit"] == rec.config["CO2_limit"]  # untouched
+    assert outcome.next_config["solver"] == "highs"                     # untouched
     assert len(outcome.applied) == 2
     assert len(outcome.blocked) == 1
+    assert len(outcome.rejected) == 1
     assert outcome.needs_human
+    assert len(rec.refinement_history) == 4
 
 
 # ---- contract roundtrip ----------------------------------------------------
 
 def test_run_record_roundtrips_with_history(tmp_path):
     rec = _record()
-    apply_refinements(rec, [ProposedChange("mipgap", None, 0.05)], SPEC)
+    apply_refinements(rec, [ProposedChange("mipgap", None, 0.05),
+                            ProposedChange("CO2_limit", None, 9e9)], SPEC)
     p = rec.save(tmp_path / "run_record.json")
     loaded = RunRecord.load(p)
     assert loaded.config_hash == rec.config_hash
     assert loaded.refinement_history[0].change == {"mipgap": [None, 0.05]}
+    assert loaded.refinement_history[1].tier == "C"
+    assert loaded.refinement_history[1].applied is False

@@ -1,0 +1,15 @@
+{
+  "task_id": "garuda_tierB_storage_cap_zero",
+  "family": "tierB_fixable",
+  "expected_status": "OPTIMAL",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "parameter_misset_storage_cap",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "flagged",
+  "planted_anomaly_metric": "site_storage_results.Total_Storage_MWh",
+  "needs_solver": "highs",
+  "notes": "Standalone village build on timor_demo with the per-unit site storage cap set to 0 MWh: the run solves, but no site storage can be built, so solar+storage microgrids collapse to solar+diesel (zero Total_Storage_MWh at every site, higher Variable_Costs_Village / diesel Electricity_GWh). The output-analyzer should flag it; the fix is raising village_storage_max_mwh (Tier B), after which storage is built. LP-relaxed expansion so it solves in minutes on HiGHS.",
+  "expected_fix_keys": [
+    "village_storage_max_mwh"
+  ]
+}

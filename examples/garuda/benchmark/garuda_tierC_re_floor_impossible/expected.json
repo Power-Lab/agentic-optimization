@@ -1,0 +1,18 @@
+{
+  "task_id": "garuda_tierC_re_floor_impossible",
+  "family": "tierC_infeasible",
+  "expected_status": "INFEASIBLE",
+  "expected_error_origin": "solver",
+  "expected_root_cause_category": "policy_share_floor_impossible",
+  "expected_tier": "C",
+  "expected_terminal_outcome": "needs_human",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "A clean run demanding a renewable share of 150 % of grid demand. A share above 1.0 is arithmetically impossible on any dataset, with or without investment. CO2_limit is set huge so only the RE floor binds. The only fixes (lower RE_limit, drop clean) are Tier C.",
+  "expected_fix_keys": [
+    "RE_limit",
+    "clean"
+  ],
+  "alternative_fix_tiers": [],
+  "tolerated_anomaly_metrics": []
+}

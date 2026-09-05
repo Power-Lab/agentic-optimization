@@ -1,8 +1,0 @@
-{
-  "termination_status": "ERROR",
-  "error_origin": "preflight",
-  "root_cause_contains": "Unknown scenario",
-  "real_fix_tier": "B",
-  "refiner_must_block": false,
-  "note": "scenario must be in the enum; validate_config rejects it before any run."
-}

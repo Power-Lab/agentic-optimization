@@ -4,8 +4,8 @@ A run record is the *only* artifact the skills pass to one another. It captures
 one optimization run's full state and history, which makes every skill
 independently testable and the whole refine loop auditable.
 
-The schema is deliberately model-agnostic: nothing here knows about villages,
-islands, or Indonesia. A model plugs in through ``framework.adapter.Adapter``;
+The schema is deliberately model-agnostic: nothing here knows any model's
+regions, keys, or file names. A model plugs in through ``framework.adapter.Adapter``;
 the record just stores whatever config dict and metrics the adapter produces.
 """
 
@@ -39,6 +39,11 @@ class Execution:
     solver_log: Optional[str] = None  # path to captured solver.log, relative to run dir
     returncode: Optional[int] = None
     error_origin: Optional[str] = None  # "preflight" | "solver" | "runtime" | None
+    # Rolling summary from the live run monitor (framework.monitor.RunMonitor
+    # .summary()): phase, best_obj, bound, last_gap, warnings, stalled, ...
+    # None for records written before monitoring existed or by adapters that
+    # do not stream. Optional so old run_record.json files still load.
+    monitor: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -71,7 +76,11 @@ class Refinement:
     change: Dict[str, Any]  # {key: [before, after]}
     rationale: str
     applied: bool  # False when Tier C is blocked pending human sign-off
-    applied_by: str = "refiner"
+    applied_by: str = "refiner"  # "refiner-unguarded" in the ablation condition
+    # Did the proposer explicitly flag this change to a human? None when the
+    # proposer did not say (plain ProposedChange). Lets the eval split silent
+    # from disclosed policy relaxations.
+    disclosed: Optional[bool] = None
 
 
 @dataclass

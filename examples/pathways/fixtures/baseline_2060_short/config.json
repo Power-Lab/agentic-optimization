@@ -1,0 +1,8 @@
+{
+  "year": 2060,
+  "optimization_days": 3,
+  "optimization_step": 30,
+  "emission_target": "2C",
+  "ccs_start_year": 2040,
+  "res_tag": "smoke"
+}

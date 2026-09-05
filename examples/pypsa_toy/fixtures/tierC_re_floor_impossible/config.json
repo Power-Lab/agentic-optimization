@@ -1,0 +1,7 @@
+{
+  "re_share_min": 1.0,
+  "co2_cap_t": null,
+  "allow_load_shedding": false,
+  "snapshots_days": 3,
+  "solver": "highs"
+}

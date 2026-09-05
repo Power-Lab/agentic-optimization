@@ -1,0 +1,17 @@
+{
+  "task_id": "garuda_tierC_re_floor_impossible",
+  "family": "tierC_infeasible",
+  "expected_status": "INFEASIBLE",
+  "expected_error_origin": "solver",
+  "expected_root_cause_category": "policy_floor_above_ceiling",
+  "expected_tier": "C",
+  "expected_terminal_outcome": "needs_human",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "clean run demanding a 150 % renewable share of grid demand: a share above 1.0 is impossible on any dataset (and maluku's fixed dispatch fleet has no RE at all). CO2_limit is huge so only the RE floor binds. Only fix: lower RE_limit or drop clean \u2014 Tier C.",
+  "expected_fix_keys": [
+    "RE_limit",
+    "clean"
+  ],
+  "root_cause_contains": "infeasible"
+}

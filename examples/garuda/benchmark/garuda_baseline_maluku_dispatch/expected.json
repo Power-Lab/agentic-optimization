@@ -1,0 +1,26 @@
+{
+  "task_id": "garuda_baseline_maluku_dispatch",
+  "family": "output_anomaly",
+  "expected_status": "OPTIMAL",
+  "expected_error_origin": null,
+  "expected_root_cause_category": null,
+  "expected_tier": null,
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "CLEAN BASELINE — the model's own CI regression case (HiGHS, minutes). Nothing is planted: every flag raised here is a FALSE POSITIVE and costs anomaly-detection precision. The one trap is the ~12.4 % unserved energy, which is a real reliability gap in this dataset and not a modelling error, so NSE metrics are listed in tolerated_anomaly_metrics. Headline values (±1 %) are recorded for reproducibility checks, not for scoring.",
+  "expected_fix_keys": [],
+  "alternative_fix_tiers": [],
+  "tolerated_anomaly_metrics": [
+    "Total_NSE_MWh",
+    "nse_results",
+    "reliability_results",
+    "unserved"
+  ],
+  "expected_headlines": {
+    "cost_results.Total_Costs": 418.75012738446367,
+    "clean_energy_results.CO2_Emissions": 889909.6973480765,
+    "reliability_results.Total_NSE_MWh(sum)": 205997.29702380873
+  },
+  "headline_tolerance": 0.01
+}

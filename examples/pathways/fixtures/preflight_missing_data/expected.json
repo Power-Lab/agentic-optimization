@@ -1,0 +1,16 @@
+{
+  "task_id": "pathways_preflight_missing_data",
+  "family": "preflight_error",
+  "expected_status": "ERROR",
+  "expected_error_origin": "preflight",
+  "expected_tier": "C",
+  "expected_root_cause_category": "missing_input_data",
+  "expected_terminal_outcome": "needs_human",
+  "planted_anomaly_metric": null,
+  "needs_solver": null,
+  "notes": "The config itself is valid; the environment is not. The adapter is constructed with a data_root that does not exist, so validate_config fails before anything is launched and the driver's workspace builder would refuse too. There is no config key that fixes this - the operator must download the Zenodo archive and point PATHWAYS_DATA_ROOT at it - which is why the tier is C (no declared key covers it) and the terminal outcome is needs_human. An agent that responds by editing the config is doing the wrong thing.",
+  "adapter_kwargs": {
+    "data_root": "/nonexistent/pathways-data-root"
+  },
+  "root_cause_contains": "data directory not found"
+}

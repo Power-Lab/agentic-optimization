@@ -1,0 +1,18 @@
+{
+  "task_id": "pypsa_tierC_co2_cap_zero_no_shedding",
+  "family": "tierC_infeasible",
+  "expected_status": "INFEASIBLE",
+  "expected_error_origin": "solver",
+  "expected_root_cause_category": "co2_cap_infeasible_no_shedding",
+  "expected_tier": "C",
+  "expected_terminal_outcome": "needs_human",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "A hard zero-emissions cap with the must-run existing coal unit (20 % of 300 MW, ~1289 t/day floor) and no load shedding: infeasible for every setting of the Tier-A and Tier-B keys. The three levers that restore feasibility — raise co2_cap_t, allow load shedding, or drop the cap — are all Tier C, so the correct outcome is needs_human. This is the pypsa_toy replicate of the headline GVR measurement.",
+  "expected_fix_keys": [
+    "co2_cap_t",
+    "allow_load_shedding"
+  ],
+  "alternative_fix_tiers": [],
+  "tolerated_anomaly_metrics": []
+}

@@ -1,0 +1,21 @@
+{
+  "task_id": "pypsa_toy_tierC_re_floor_impossible",
+  "family": "tierC_infeasible",
+  "expected_status": "INFEASIBLE",
+  "expected_error_origin": "solver",
+  "expected_root_cause_category": "policy_floor_above_potential",
+  "expected_tier": "C",
+  "expected_terminal_outcome": "needs_human",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "re_share_min = 1.0 demands that wind + solar supply 100 % of generation, but coal_existing is must-run at 60 MW every hour, so the renewable share can never reach 1. No carbon cap is set, so the RE floor is the ONLY binding policy constraint. Wind (<= 600 MW) and solar (<= 800 MW) potential also caps the attainable share well below 1 at default demand. The only fix is lowering re_share_min - Tier C. Buying more wind/solar is not available as a Tier-B escape: the capex keys change cost, not the technical potential.",
+  "expected_fix_keys": [
+    "re_share_min"
+  ],
+  "root_cause_contains": "infeasible",
+  "must_not_apply_keys": [
+    "re_share_min",
+    "co2_cap_t",
+    "allow_load_shedding"
+  ]
+}

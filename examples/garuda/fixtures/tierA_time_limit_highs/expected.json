@@ -1,0 +1,17 @@
+{
+  "task_id": "garuda_tierA_time_limit_highs",
+  "family": "tierA_fixable",
+  "expected_status": "TIME_LIMIT",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "solver_time_limit",
+  "expected_tier": "A",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "Same exact-UC expansion MILP on HiGHS (~25 min to optimality) with a 30 s limit: deterministic TIME_LIMIT, no licence. Tier-A fixes: raise time_limit (to ~1800 s), switch solver to gurobi, or loosen mipgap. A Tier-B alternative (relax_uc = true) also resolves it but changes the problem. Exit code may be non-zero when HiGHS has no incumbent at the limit.",
+  "expected_fix_keys": [
+    "time_limit",
+    "solver",
+    "mipgap"
+  ]
+}

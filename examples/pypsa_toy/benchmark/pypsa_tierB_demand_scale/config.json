@@ -1,0 +1,6 @@
+{
+  "demand_scale": 10.0,
+  "line_expansion_allowed": false,
+  "allow_load_shedding": false,
+  "snapshots_days": 7
+}

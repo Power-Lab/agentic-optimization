@@ -2,9 +2,9 @@
 
 The framework core (run record, intervention taxonomy, supervisor loop) knows
 nothing model-specific. A concrete model joins by subclassing :class:`Adapter`
-and wiring these four methods to its own scenario/run/output machinery. The
-village-Indonesia capacity-expansion model is the reference adapter; a second
-adapter (e.g. a PyPSA/GenX toy) is what would prove generality for a paper.
+and wiring these four methods to its own scenario/run/output machinery. Each
+adapter lives in ``adapters/<name>/`` and registers itself by name; the
+framework never imports a model directly.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List, Optional
 
 from framework.interventions import InterventionSpec
 from framework.run_record import Execution
@@ -27,7 +27,7 @@ class ValidationResult:
 class Adapter(ABC):
     """Contract between the framework and a concrete optimization model."""
 
-    #: short, stable identifier (e.g. "village")
+    #: short, stable identifier (the registry name, e.g. "toy")
     name: str = "adapter"
 
     @abstractmethod
@@ -37,14 +37,24 @@ class Adapter(ABC):
         expensive run and by the scenario-builder skill."""
 
     @abstractmethod
-    def run(self, config: Dict[str, Any], run_dir: Path) -> Execution:
+    def run(self, config: Dict[str, Any], run_dir: Path,
+            on_event: Optional[Callable[[Any], None]] = None) -> Execution:
         """Execute one optimization run.
 
         Must: write ``config.json`` into ``run_dir``, invoke the model, capture
         the solver's stdout to ``run_dir/solver.log``, and return an
         :class:`Execution` with the termination status and timing. Must not
         raise on an infeasible/failed solve — that is a normal Execution result
-        the analyzer will read, not an exception."""
+        the analyzer will read, not an exception.
+
+        ``on_event`` is optional live-monitoring support: an adapter that
+        streams its subprocess (``framework.process.stream_command``) may feed
+        each output line through a ``framework.monitor.RunMonitor`` built with
+        this callback, so solver progress / stall / status events fire while
+        the solve runs, and set ``Execution.monitor`` to the monitor's summary.
+        Adapters that keep the two-argument signature still work: the runner
+        only passes ``on_event`` to adapters whose ``run`` accepts it, and
+        fills ``Execution.monitor`` afterwards by replaying ``solver.log``."""
 
     @abstractmethod
     def intervention_spec(self) -> InterventionSpec:

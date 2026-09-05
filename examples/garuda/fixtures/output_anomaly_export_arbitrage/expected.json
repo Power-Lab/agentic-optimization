@@ -1,0 +1,20 @@
+{
+  "task_id": "garuda_output_anomaly_export_arbitrage",
+  "family": "output_anomaly",
+  "expected_status": "OPTIMAL",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "export_price_above_import_price",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "flagged",
+  "planted_anomaly_metric": "cost_results.Village_Export_Revenue",
+  "needs_solver": "highs",
+  "notes": "Coordinated grid+village dispatch on timor_demo with export_price (100) > import_price (59): a connected site profits from importing and re-exporting, bounded only by the interconnection cap. The run is OPTIMAL but Village_Export_Revenue is large (~0 in a sane run) and site_connection_results shows Total_Export_MWh tracking Total_Import_MWh. The model itself prints 'WARNING: export_price (...) > import_price (...)' in solver.log. Fix = lower export_price (Tier B); export_backed_by_generation (Tier C) would also block the wash trade but is a policy rule.",
+  "expected_fix_keys": [
+    "export_price"
+  ],
+  "anomaly_signals": [
+    "solver.log: WARNING: export_price (100.0) > import_price (59.0)",
+    "cost_results.Village_Export_Revenue >> 0",
+    "site_connection_results.Total_Export_MWh ~ Total_Import_MWh"
+  ]
+}

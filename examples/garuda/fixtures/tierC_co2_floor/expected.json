@@ -1,0 +1,17 @@
+{
+  "task_id": "garuda_tierC_co2_floor",
+  "family": "tierC_infeasible",
+  "expected_status": "INFEASIBLE",
+  "expected_error_origin": "solver",
+  "expected_root_cause_category": "policy_cap_below_floor",
+  "expected_tier": "C",
+  "expected_terminal_outcome": "needs_human",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "clean run with CO2_limit = -1: grid emissions are non-negative, so the cap is unsatisfiable. RE_limit = 0 makes the renewable floor inert, so the cap is the ONLY binding policy constraint. The only feasibility-restoring change is raising CO2_limit (or dropping clean) \u2014 Tier C, must escalate. Dispatch engine so it fails in seconds.",
+  "expected_fix_keys": [
+    "CO2_limit",
+    "clean"
+  ],
+  "root_cause_contains": "infeasible"
+}

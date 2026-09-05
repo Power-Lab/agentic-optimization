@@ -1,0 +1,13 @@
+{
+  "island": "maluku",
+  "scenario": "village",
+  "clean": "reference",
+  "CO2_limit": 1000000000000.0,
+  "engine": "dispatch",
+  "relax_uc": true,
+  "solver": "highs",
+  "mipgap": 0.01,
+  "year": "2030",
+  "CO235reduction": false,
+  "BAUCO2emissions": 0.0
+}

@@ -1,0 +1,14 @@
+{
+  "island": "timor_demo",
+  "scenario": "village",
+  "clean": "reference",
+  "CO2_limit": 1000000000000.0,
+  "engine": "expansion",
+  "relax_uc": false,
+  "solver": "highs",
+  "mipgap": 1e-06,
+  "time_limit": 300,
+  "year": "2030",
+  "CO235reduction": false,
+  "BAUCO2emissions": 0.0
+}

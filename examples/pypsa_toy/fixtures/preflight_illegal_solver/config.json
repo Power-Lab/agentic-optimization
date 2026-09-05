@@ -1,0 +1,5 @@
+{
+  "solver": "gurobi",
+  "snapshots_days": 3,
+  "time_limit": 60.0
+}

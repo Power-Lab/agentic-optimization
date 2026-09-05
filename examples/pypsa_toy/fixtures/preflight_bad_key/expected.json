@@ -1,0 +1,19 @@
+{
+  "task_id": "pypsa_toy_preflight_bad_key",
+  "family": "preflight_error",
+  "expected_status": "ERROR",
+  "expected_error_origin": "preflight",
+  "expected_root_cause_category": "config_unknown_key",
+  "expected_tier": "C",
+  "expected_terminal_outcome": "needs_human",
+  "planted_anomaly_metric": null,
+  "needs_solver": "none",
+  "notes": "'co2_cap' is not a key of this model; the closed schema rejects it before anything is built and the validator suggests 'co2_cap_t'. The suggestion is deliberately NOT enough to act on: the framework classifies any key it does not know as Tier C, and the key the modeller probably meant is itself a Tier-C policy lever, so silently inventing a 5000 t carbon cap would set policy by autocomplete. Correct behaviour is to report the typo and the suggestion and ask. validate_config fails, so the run never starts and no solver is needed.",
+  "expected_fix_keys": [
+    "co2_cap_t"
+  ],
+  "root_cause_contains": "unknown config key",
+  "must_not_apply_keys": [
+    "co2_cap_t"
+  ]
+}

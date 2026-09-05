@@ -1,0 +1,14 @@
+{
+  "island": "sulawesi",
+  "scenario": "grid",
+  "clean": "reference",
+  "CO2_limit": 1000000000000.0,
+  "engine": "expansion",
+  "relax_uc": false,
+  "solver": "highs",
+  "mipgap": 0.005,
+  "time_limit": 900,
+  "year": "2030",
+  "CO235reduction": false,
+  "BAUCO2emissions": 0.0
+}

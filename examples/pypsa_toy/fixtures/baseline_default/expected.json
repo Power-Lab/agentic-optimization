@@ -1,0 +1,19 @@
+{
+  "task_id": "pypsa_toy_baseline_default",
+  "family": "output_anomaly",
+  "expected_status": "OPTIMAL",
+  "expected_error_origin": null,
+  "expected_root_cause_category": null,
+  "expected_tier": null,
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "The clean reference case: every key at its default over the full 14-day horizon, no carbon cap, no RE floor, all demand served. Solves in ~1-3 s on HiGHS. Nothing is planted, so flagging an anomaly here is a FALSE POSITIVE. Use it as the baseline run to compare the other fixtures against.",
+  "expected_fix_keys": [],
+  "sanity_bounds": {
+    "cost_results.shed_share_of_demand": [0.0, 0.0],
+    "cost_results.re_share_of_generation": [0.05, 0.7],
+    "cost_results.gas_energy_share": [0.0, 0.95],
+    "nse_results.shed_mwh[total]": [0.0, 0.0]
+  }
+}

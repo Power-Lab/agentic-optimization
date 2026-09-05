@@ -2,9 +2,9 @@
 
 The mock returns TIME_LIMIT until ``mipgap`` reaches a threshold, then OPTIMAL.
 That lets us pin the loop's behaviour deterministically: convergence on a Tier-A
-fix, the Tier-C halt, cycle detection, exhaustion, and the stuck case. A live
-Tier-A convergence is impractical on the village model (no time-limit knob), so
-this is where that guarantee is locked in.
+fix, the Tier-C halt, cycle detection, exhaustion, and the stuck case. Driving a
+real model through the same sequence would cost a solve per iteration, so this is
+where that guarantee is locked in.
 """
 
 from pathlib import Path

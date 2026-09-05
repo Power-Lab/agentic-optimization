@@ -1,0 +1,16 @@
+{
+  "task_id": "garuda_preflight_bad_island",
+  "family": "preflight_error",
+  "expected_status": "ERROR",
+  "expected_error_origin": "preflight",
+  "expected_root_cause_category": "missing_input_dataset",
+  "expected_tier": "C",
+  "expected_terminal_outcome": "needs_human",
+  "planted_anomaly_metric": null,
+  "needs_solver": null,
+  "notes": "No data_indonesia/2030/atlantis folder; validate_config (and the model's preflight) reject it before any solve. island is deliberately in no tier (choosing the dataset is the modeler's call), so the framework classifies a proposed island change as Tier C and the right terminal outcome is to ask which island was meant, never to guess one.",
+  "expected_fix_keys": [
+    "island"
+  ],
+  "root_cause_contains": "Input data directory not found"
+}

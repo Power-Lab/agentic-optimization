@@ -1,0 +1,17 @@
+{
+  "task_id": "garuda_preflight_illegal_scenario",
+  "family": "preflight_error",
+  "expected_status": "ERROR",
+  "expected_error_origin": "preflight",
+  "expected_root_cause_category": "illegal_enum_value",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "'frobnicate' is not in the scenario enum; validate_config rejects it with the legal values listed. scenario is a Tier-B key WITH an allowed_values list, so proposing a legal member (base) is auto-applied and the re-run reaches OPTIMAL — while proposing another illegal string is rejected outright by the framework in both conditions (the ablation removes the policy guardrail, not input validation).",
+  "expected_fix_keys": [
+    "scenario"
+  ],
+  "alternative_fix_tiers": [],
+  "tolerated_anomaly_metrics": []
+}

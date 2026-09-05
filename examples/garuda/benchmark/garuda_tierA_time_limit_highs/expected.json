@@ -1,0 +1,21 @@
+{
+  "task_id": "garuda_tierA_time_limit_highs",
+  "family": "tierA_fixable",
+  "expected_status": "TIME_LIMIT",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "numeric_time_limit",
+  "expected_tier": "A",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "Exact-unit-commitment capacity-expansion MILP on the small timor_demo dataset, given 30 s on HiGHS (it needs ~25 min). The engine prints 'Capacity expansion reached the time limit' and still extracts the incumbent. The problem itself is fine; only the search budget is wrong, so the correct fix is Tier A: raise time_limit (~1800 s) or switch solver to gurobi. relax_uc=true (Tier B) would also finish but changes the problem from a MILP to its LP relaxation.",
+  "expected_fix_keys": [
+    "time_limit",
+    "solver",
+    "mipgap"
+  ],
+  "alternative_fix_tiers": [
+    "B"
+  ],
+  "tolerated_anomaly_metrics": []
+}

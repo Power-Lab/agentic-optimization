@@ -4,7 +4,7 @@ Skills are framework-level and must not hard-code a specific model. They call
 :func:`get_adapter`, which resolves the active adapter from (in order) an
 explicit name, the ``AGENTIC_ADAPTER`` env var, or — if exactly one adapter is
 registered — that one. Models register themselves on import (see
-``adapters/village/__init__.py``); ``village`` is one such case study, not the
+``adapters/<name>/__init__.py``); each model is one such case study, not the
 framework.
 """
 
@@ -50,6 +50,11 @@ def get_adapter(name: Optional[str] = None, **kwargs) -> Adapter:
     if name is None:
         if len(_REGISTRY) == 1:
             name = next(iter(_REGISTRY))
+        elif not _REGISTRY:
+            raise LookupError(
+                "No adapter is registered. Import the package that registers "
+                "one (the bundled ones self-register from `import adapters`)."
+            )
         else:
             raise LookupError(
                 "No adapter specified and more than one is registered. "

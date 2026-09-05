@@ -1,8 +1,0 @@
-{
-  "termination_status": "ERROR",
-  "error_origin": "preflight",
-  "root_cause_contains": "Input data directory not found",
-  "real_fix_tier": "B",
-  "refiner_must_block": false,
-  "note": "No data_indonesia/2030/atlantis folder. Fix is to correct the region, not to relax any policy."
-}

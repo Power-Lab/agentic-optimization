@@ -1,0 +1,15 @@
+{
+  "island": "timor_demo",
+  "scenario": "gridvillage",
+  "clean": "reference",
+  "CO2_limit": 1000000000000.0,
+  "engine": "expansion",
+  "relax_uc": false,
+  "solver": "gurobi",
+  "lp_method": 2,
+  "mipgap": 0.0001,
+  "time_limit": 5,
+  "year": "2030",
+  "CO235reduction": false,
+  "BAUCO2emissions": 0.0
+}

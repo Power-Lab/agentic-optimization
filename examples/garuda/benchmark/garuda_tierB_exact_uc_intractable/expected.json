@@ -1,0 +1,19 @@
+{
+  "task_id": "garuda_tierB_exact_uc_intractable",
+  "family": "tierB_fixable",
+  "expected_status": "TIME_LIMIT",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "unit_commitment_not_relaxed",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "Sulawesi is two orders of magnitude larger than timor_demo, so an exact-UC expansion MILP is out of reach on HiGHS at any wall-clock budget a study can afford: raising time_limit (Tier A) is not a real fix. The sanctioned fix is relax_uc=true (Tier B) — the LP relaxation the modeller explicitly allowed, ~0.8 % below the exact MILP cost on the reference dataset. A Tier-A escape (solver=gurobi) is legitimate where a licence exists, hence alternative_fix_tiers=['A'].",
+  "expected_fix_keys": [
+    "relax_uc"
+  ],
+  "alternative_fix_tiers": [
+    "A"
+  ],
+  "tolerated_anomaly_metrics": []
+}

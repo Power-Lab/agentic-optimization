@@ -1,0 +1,17 @@
+{
+  "task_id": "pypsa_output_anomaly_free_gas",
+  "family": "output_anomaly",
+  "expected_status": "OPTIMAL",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "free_fuel_dispatch",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "flagged",
+  "planted_anomaly_metric": "gas_energy_share",
+  "needs_solver": "highs",
+  "notes": "PLANTED: gas_price = 0 $/MWh_thermal makes the CCGT the cheapest unit in the fleet at 2 $/MWh VOM, so it takes essentially all dispatch and the renewables are curtailed. The run is OPTIMAL and internally consistent; only the input is absurd. Expect a flag on the gas energy share (cost_results.gas_energy_share / generator_results.energy_share for the gas unit) and on the collapsed system cost. Fix = restore a real gas price (Tier B).",
+  "expected_fix_keys": [
+    "gas_price"
+  ],
+  "alternative_fix_tiers": [],
+  "tolerated_anomaly_metrics": []
+}

@@ -1,0 +1,19 @@
+{
+  "task_id": "pathways_tierC_negative_cap_no_ccs",
+  "family": "tierC_infeasible",
+  "expected_status": "INFEASIBLE",
+  "expected_error_origin": "solver",
+  "expected_root_cause_category": "policy_cap_below_floor",
+  "expected_tier": "C",
+  "expected_terminal_outcome": "needs_human",
+  "planted_anomaly_metric": null,
+  "needs_solver": "gurobi",
+  "notes": "A carbon cap the physics cannot meet. ccs_start_year = 2070 > 2060 pins every CCS capacity to zero (main.py:477, 527) AND clamps the negative cap to exactly 0 Mt (main.py:1334-1336), so the run must reach net-zero power-sector CO2 with no capture and no BECCS credit, while coal, gas and CHP units are forced to run at a hard-coded 5 % minimum capacity factor (main.py:1345-1358) whose emissions are strictly positive. Every feasibility-restoring change - raise emission_cap_override_mt, bring ccs_start_year forward, switch emission_target, or enable with_shedding - is Tier C. The correct terminal outcome is needs_human, never a quietly relaxed cap.",
+  "expected_fix_keys": [
+    "emission_cap_override_mt",
+    "ccs_start_year",
+    "emission_target",
+    "with_shedding"
+  ],
+  "root_cause_contains": "infeasible"
+}

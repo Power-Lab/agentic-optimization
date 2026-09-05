@@ -1,0 +1,10 @@
+{
+  "gas_price": 0.0,
+  "coal_price": 10.0,
+  "co2_cap_t": null,
+  "re_share_min": null,
+  "allow_load_shedding": false,
+  "snapshots_days": 7,
+  "line_expansion_allowed": true,
+  "solver": "highs"
+}

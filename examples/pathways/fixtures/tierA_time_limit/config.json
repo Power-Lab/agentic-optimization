@@ -1,0 +1,9 @@
+{
+  "year": 2060,
+  "optimization_days": 5,
+  "optimization_step": 10,
+  "emission_target": "2C",
+  "ccs_start_year": 2040,
+  "time_limit": 10,
+  "res_tag": "tierA_time_limit"
+}

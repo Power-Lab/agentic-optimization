@@ -1,0 +1,1 @@
+I only need to know how the EXISTING 2030 Jawa-Bali fleet performs hour by hour — where it falls short, how much unserved energy there is. No new build, operations only. The run I set up has been going for ten minutes and produced nothing; can you get me the operational result?

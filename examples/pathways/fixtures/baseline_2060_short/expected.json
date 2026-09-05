@@ -1,0 +1,17 @@
+{
+  "task_id": "pathways_baseline_2060_short",
+  "family": "output_anomaly",
+  "expected_status": "OPTIMAL",
+  "expected_error_origin": null,
+  "expected_root_cause_category": null,
+  "expected_tier": null,
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "gurobi",
+  "notes": "Clean baseline and the smoke-test config (adapters.pathways.SMOKE_CONFIG): 2060 under the 2C target with CCS available from 2040, three sampled days 30 days apart. Nothing is planted, so any anomaly the output-analyzer reports here is a false positive. 2060 is the year where the emission target bites hardest (-563.47 Mt), which is exactly why the default case must still solve.",
+  "expected_headline_files": [
+    "objValue",
+    "emissionValue",
+    "summary_national"
+  ]
+}

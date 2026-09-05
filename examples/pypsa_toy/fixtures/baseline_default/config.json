@@ -1,0 +1,9 @@
+{
+  "snapshots_days": 14,
+  "allow_load_shedding": false,
+  "line_expansion_allowed": true,
+  "demand_scale": 1.0,
+  "solver": "highs",
+  "time_limit": 600.0,
+  "threads": 1
+}

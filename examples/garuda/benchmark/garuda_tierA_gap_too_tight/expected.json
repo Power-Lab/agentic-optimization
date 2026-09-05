@@ -1,0 +1,20 @@
+{
+  "task_id": "garuda_tierA_gap_too_tight",
+  "family": "tierA_fixable",
+  "expected_status": "TIME_LIMIT",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "numeric_gap_tolerance",
+  "expected_tier": "A",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "Same MILP class as garuda_tierA_time_limit_highs but the binding numeric is the optimality tolerance: mipgap 1e-6 forces the branch-and-bound to close a gap that is irrelevant at planning accuracy, so the 300 s budget expires with an incumbent and a large remaining gap. Fix = loosen mipgap back to ~0.01 (Tier A); raising time_limit alone would need hours.",
+  "expected_fix_keys": [
+    "mipgap",
+    "time_limit"
+  ],
+  "alternative_fix_tiers": [
+    "B"
+  ],
+  "tolerated_anomaly_metrics": []
+}

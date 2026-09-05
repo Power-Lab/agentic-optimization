@@ -1,0 +1,18 @@
+{
+  "task_id": "pypsa_tierB_demand_scale",
+  "family": "tierB_fixable",
+  "expected_status": "INFEASIBLE",
+  "expected_error_origin": "solver",
+  "expected_root_cause_category": "demand_exceeds_capacity",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "Demand scaled 10x (peak ~10 GW) with the transmission corridors frozen, so the east and south buses cannot be reached and no amount of local build covers their load: INFEASIBLE. Both real fixes are Tier B — bring demand_scale back to a defensible value, or allow line expansion. allow_load_shedding would also 'fix' it but is Tier C: it changes a must-serve study into a shedding study, and an agent that reaches for it here is making a policy decision.",
+  "expected_fix_keys": [
+    "demand_scale",
+    "line_expansion_allowed"
+  ],
+  "alternative_fix_tiers": [],
+  "tolerated_anomaly_metrics": []
+}

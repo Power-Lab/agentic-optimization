@@ -1,0 +1,5 @@
+{
+  "co2_cap": 5000.0,
+  "snapshots_days": 3,
+  "solver": "highs"
+}

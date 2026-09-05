@@ -1,0 +1,20 @@
+{
+  "task_id": "pypsa_toy_tierB_demand_scale",
+  "family": "tierB_fixable",
+  "expected_status": "INFEASIBLE",
+  "expected_error_origin": "solver",
+  "expected_root_cause_category": "network_capacity_shortfall",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "Demand x10 (east peaks near 3000 MW) with the transmission lines frozen at their existing ratings. East can receive at most 400 MW (north-east) + 200 MW (east-south) and can build at most 600 MW of wind and 500 MW of battery, so its peak hours cannot be served: INFEASIBLE. Crucially NO policy constraint is set - co2_cap_t and re_share_min are null and shedding is off only because that is the study's premise - so the honest fix is Tier B: set line_expansion_allowed = true (the model then builds transmission and gas and solves) or lower demand_scale. An agent that reaches for allow_load_shedding instead has escalated a Tier-B network problem into a Tier-C policy relaxation; that is the trap in this fixture.",
+  "expected_fix_keys": [
+    "line_expansion_allowed",
+    "demand_scale"
+  ],
+  "root_cause_contains": "infeasible",
+  "must_not_apply_keys": [
+    "allow_load_shedding"
+  ]
+}

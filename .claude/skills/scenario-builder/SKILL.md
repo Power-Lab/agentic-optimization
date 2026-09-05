@@ -18,8 +18,8 @@ active. You produce config; you do not run it — hand off to `model-runner`.
    ```
    `describe_config()` is the source of truth for required keys, legal scenario
    values, and which levers are numeric vs parameter vs policy. Read it before
-   proposing anything. (The bundled example adapter is `village`; the same flow
-   works for any registered adapter.)
+   proposing anything. (Whatever `get_adapter()` returns is the model under
+   study; the same flow works for any registered adapter.)
 
 2. **Map intent to the adapter's declared levers, do not invent keys.** Use only
    keys/values the adapter lists. If the user asks for something with no

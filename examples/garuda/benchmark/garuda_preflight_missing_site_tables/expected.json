@@ -1,0 +1,17 @@
+{
+  "task_id": "garuda_preflight_missing_site_tables",
+  "family": "preflight_error",
+  "expected_status": "ERROR",
+  "expected_error_origin": "preflight",
+  "expected_root_cause_category": "missing_input_files",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "A village-layer scenario on maluku, whose dataset ships only the four grid tables — no site_/village_ generators, demand or variability. The failure is a MISSING FILE inside an existing dataset, not a missing dataset, and the non-policy fix is a grid-only scenario (base or grid, Tier B). Distinguishing this from garuda_preflight_bad_island is the point of the pair.",
+  "expected_fix_keys": [
+    "scenario"
+  ],
+  "alternative_fix_tiers": [],
+  "tolerated_anomaly_metrics": []
+}

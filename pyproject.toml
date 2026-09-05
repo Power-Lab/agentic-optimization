@@ -4,16 +4,27 @@ version = "0.1.0"
 description = "Model-agnostic agentic supervisory framework for iterative energy-system optimization"
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = [
-    "click>=8.0",
-    "pyyaml>=6.0",
-]
+# The framework, the adapters and the eval harness are stdlib-only on purpose:
+# every model runs in a subprocess under its own interpreter, so nothing heavy
+# has to be installed alongside the framework. Extras below are per-model.
+dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0"]
+# The reproducible toy model. Install into whatever interpreter PYPSA_PYTHON
+# points at; it never has to be the one running the framework.
+pypsa = ["pypsa>=0.30", "highspy"]
+# The Pathways model needs a conda env (gurobipy + geopandas + scipy) and the
+# Zenodo data; pip can provision neither. See examples/pathways/README.md.
+pathways = []
+# Only for framework.llm.AnthropicAPIClient (a seam; the default provider is
+# the `claude` CLI, an external binary rather than a Python dependency).
+anthropic = ["anthropic>=1.0"]
+# eval/report.py's GVR figure. Every metric table works without it.
+report = ["matplotlib>=3.5"]
 
 [tool.setuptools.packages.find]
-include = ["framework*", "adapters*"]
+include = ["framework*", "adapters*", "eval*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

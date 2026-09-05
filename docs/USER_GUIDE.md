@@ -21,10 +21,14 @@ jump to what you need.
 8. [The guardrail, explained for modelers](#8-the-guardrail-explained-for-modelers)
 9. [The config: what you can and cannot set](#9-the-config)
 10. [What you get back: outputs and the run record](#10-what-you-get-back)
-11. [File-by-file reference: what every file means](#11-file-by-file-reference)
-12. [Adding your own model (a new adapter)](#12-adding-your-own-model)
-13. [Troubleshooting & FAQ](#13-troubleshooting--faq)
-14. [Glossary](#14-glossary)
+11. [Watching a run while it solves](#11-watching-a-run-while-it-solves)
+12. [Running it headless (and the guardrail ablation)](#12-running-it-headless)
+13. [The other two models](#13-the-other-two-models)
+14. [Running the study (the eval harness)](#14-running-the-study)
+15. [File-by-file reference: what every file means](#15-file-by-file-reference)
+16. [Adding your own model (a new adapter)](#16-adding-your-own-model)
+17. [Troubleshooting & FAQ](#17-troubleshooting--faq)
+18. [Glossary](#18-glossary)
 
 ---
 
@@ -52,10 +56,14 @@ Two things are deliberately true and important:
   secretly relaxing your carbon cap. Those changes are escalated to you. (Details
   in [section 8](#8-the-guardrail-explained-for-modelers).)
 
-The bundled example is the **village-Indonesia 100 GW** capacity-expansion model,
-but the framework is **model-agnostic**: your own model can be plugged in (see
-[section 12](#12-adding-your-own-model)). Throughout this guide, "the model" means
-whichever model is currently active; the village model is used in all examples.
+Three models are bundled: **garuda** (a zonal capacity-expansion / dispatch model
+for Indonesia — the reference example used throughout this guide), **pathways**
+(a provincial hourly model for China), and **pypsa_toy** (a tiny, licence-free,
+fully reproducible LP that lives in this repo). The framework is
+**model-agnostic**: your own model plugs in the same way (see
+[section 16](#16-adding-your-own-model)). Throughout this guide, "the model"
+means whichever model is currently active; [section 13](#13-the-other-two-models)
+covers the other two.
 
 ---
 
@@ -103,39 +111,47 @@ fenced in by the framework so it can't overstep.
 
 ## 3. One-time setup
 
-You need: **Git**, **Python ≥ 3.9**, **Julia**, and a **working Gurobi licence**
-(the village model is too large for the free size-limited licence — an academic
-licence works).
+You need **Git** and **Python ≥ 3.9** for the framework itself, plus whatever the
+model you want to drive needs. For the reference model (garuda) that is **Julia**;
+a solver licence is optional, because it ships with the free HiGHS solver and only
+the largest cases really want Gurobi. If you just want to see the whole thing work
+in a few seconds with nothing else installed, use **pypsa_toy**
+([section 13](#13-the-other-two-models)).
 
 ```bash
-# 1. Get the code and the model (the model is a git "submodule" — a pinned copy
-#    of the village repo that lives under models/village/)
+# 1. Get the code and the models (each model is a git "submodule" — a pinned copy
+#    of that model's own repository, under models/)
 git clone https://github.com/Power-Lab/agentic-optimization.git
 cd agentic-optimization
 git submodule update --init --recursive
 
-# 2. Install the Python framework and its (tiny) dependencies
+# 2. Install the Python framework (it is stdlib-only; each model runs in a
+#    subprocess under its own interpreter, so nothing heavy comes along)
 pip install -e .
 
-# 3. One-time: prepare the model's Julia environment (installs Julia packages,
-#    checks that Gurobi can start). Takes ~1 minute the first time.
-julia --project=models/village models/village/bootstrap.jl
+# 3. One-time: prepare the reference model's Julia environment (installs Julia
+#    packages, checks a solver can start). Takes ~1 minute the first time.
+julia --project=models/garuda models/garuda/bootstrap.jl
+
+# 4. Tell the framework which model is active (three are registered)
+export AGENTIC_ADAPTER=garuda
 ```
 
-Confirm everything works end-to-end with the **smoke test** — it runs the smallest
-real scenario (Maluku 2030) and checks the answer matches a known-good baseline:
+Confirm everything works end-to-end with the **smoke test** — it runs the model's
+own committed regression case (Maluku 2030 dispatch on HiGHS, no licence needed)
+and checks the three headline numbers match the model's baseline within 1 %:
 
 ```bash
-python examples/village/smoke_test.py
+python examples/garuda/smoke_test.py            # add --solver gurobi if you have it
 ```
 
-You should see `✅ ALL CHECKS PASSED`. If you do, the framework can drive your
-solver. If not, jump to [Troubleshooting](#13-troubleshooting--faq).
+You should see `[smoke] ALL CHECKS PASSED`. If you do, the framework can drive your
+solver. If not, jump to [Troubleshooting](#17-troubleshooting--faq).
 
-> **What is a "submodule"?** `models/village/` is not a copy you edit — it's a
-> reference to a specific commit of the village model's own repository. The
-> framework never modifies it. This keeps a clean line between "the framework" and
-> "the model it happens to be driving."
+> **What is a "submodule"?** `models/garuda/` is not a copy you edit — it's a
+> reference to a specific commit of that model's own repository. The framework
+> never modifies it. This keeps a clean line between "the framework" and "the
+> model it happens to be driving."
 
 ---
 
@@ -150,7 +166,10 @@ does it. You never write Python. → [Walkthrough A](#5-walkthrough-a--conversat
 
 **B. Programmatic.** If you want to script runs, embed the loop in a notebook, or
 run unattended sweeps, you can call the framework directly from Python. The example
-scripts under `examples/village/` show exactly how. → [Walkthrough B](#6-walkthrough-b--from-python).
+scripts under `examples/garuda/` show exactly how. → [Walkthrough B](#6-walkthrough-b--from-python).
+There is also a third door for experiments: a **headless driver** that runs the
+same skills against an LLM with no interactive session at all
+([section 12](#12-running-it-headless)).
 
 Both front doors use the **same framework underneath**, so they behave identically
 and obey the same guardrail.
@@ -169,6 +188,12 @@ then run both."**
   fills in the rest of the config, and validates both.
 - The **model-runner** skill runs each one through the solver, capturing the log
   and writing a results folder per run.
+
+**"Is it still going, or is it stuck?"**
+- The **run-monitor** skill reads the live event stream from the solve in flight —
+  incumbents, the gap, the bound, warnings — and tells you whether it is making
+  progress, has stalled, or is about to hit its time limit
+  ([section 11](#11-watching-a-run-while-it-solves)).
 
 **"Why did the coordinated one fail?"**
 - The **log-analyzer** skill opens that run's `solver.log`, sees the termination
@@ -206,7 +231,7 @@ you the right one.
 ```python
 from framework import get_adapter, run_and_record
 
-adapter = get_adapter()          # resolves the active model (here: "village")
+adapter = get_adapter()          # AGENTIC_ADAPTER decides; or get_adapter("garuda")
 print(adapter.describe_config()) # prints the schema: keys, scenarios, levers
 
 # 1. Define a scenario (a plain dict — see section 9 for the keys)
@@ -247,9 +272,12 @@ The supervisor enforces the guardrail for you: if `propose` ever returns a polic
 relaxation (Tier C), the loop **halts with `needs_human`** instead of applying it.
 
 The runnable, commented versions of all of this are:
-- `examples/village/smoke_test.py` — run one scenario, check against baseline.
-- `examples/village/demo_refine_loop.py` — the guardrail refusing a cap relaxation.
-- `examples/village/demo_supervisor.py` — the closed loop halting for sign-off.
+- `examples/garuda/smoke_test.py` — run the regression case, check the headlines.
+- `examples/garuda/demo_refine_loop.py` — the guardrail refusing a cap relaxation.
+- `examples/garuda/demo_supervisor.py` — the closed loop halting for sign-off.
+
+The same three exist under `examples/pypsa_toy/` and solve in seconds with no
+licence — the fastest way to watch the whole loop actually run.
 
 ---
 
@@ -257,7 +285,8 @@ The runnable, commented versions of all of this are:
 
 Each skill is a short instruction file under `.claude/skills/<name>/SKILL.md`. You
 don't run these directly — the assistant invokes them. Knowing what each does helps
-you ask for the right thing.
+you ask for the right thing. (A seventh, **run-monitor**, was added with live
+monitoring; it is listed at the end of the table.)
 
 | Skill | Concept-note task | What it does | When it triggers |
 |-------|-------------------|--------------|------------------|
@@ -267,6 +296,7 @@ you ask for the right thing.
 | **output-analyzer** | 4. Analyze outputs | Flags implausible patterns in a *successful* run's results | "are these results realistic?", "why are emissions so high?" |
 | **refiner** | 5. Refine | Proposes & applies a *controlled* change, escalates policy changes | "fix it", "adjust to reduce cost" |
 | **supervisor** | 6. Iterate | Runs the whole loop autonomously with dedup + stopping rules | "iterate until it solves", "drive this to convergence" |
+| **run-monitor** | (2b. Watch) | Reads a solve *while it runs* and decides whether to wait, nudge a Tier-A setting, or abort | "is it still running?", "is it stuck?" |
 
 A natural division of labor: **log-analyzer** handles runs that *failed*;
 **output-analyzer** handles runs that *succeeded but might be wrong*; **refiner**
@@ -286,13 +316,14 @@ adapter, so it reflects *your* model's meaning.
   solver searches*, not *what problem it solves*: the MIP gap, tolerances, a time
   limit. Loosening the MIP gap from 1% to 5% gives a slightly less tight solution
   faster — it does not change what scenario you asked. The agent may do this on its
-  own. *(Village example: `mipgap`.)*
+  own. *(garuda: `mipgap`, `time_limit`, `solver`, `lp_method`, `run_tag`.)*
 
 - **Tier B — sanctioned parameters (applied, but flagged).** Choices you have
   explicitly put on the table: switching among the allowed scenario names, changing
   an import price, raising a per-unit storage cap. These change the answer, but stay
   inside the space you sanctioned. The agent applies them and tells you.
-  *(Village example: `scenario`, `import_price`, `village_storage_max_mwh`.)*
+  *(garuda: `scenario`, `engine`, `relax_uc`, `exact_connect`, `import_price`,
+  `export_price`, `village_storage_max_mwh`, `battery_duration_h`.)*
 
 - **Tier C — policy constraints (NEVER applied silently).** Anything that *relaxes a
   policy target*: loosening a carbon cap, lowering a renewable-share floor, lifting
@@ -301,7 +332,8 @@ adapter, so it reflects *your* model's meaning.
   has produced a feasible answer to a **different question** — which is worse than an
   honest "infeasible." The framework refuses to auto-apply these; it records the
   proposal and escalates to you with the trade-off spelled out.
-  *(Village example: `clean`, `CO2_limit`, `RE_limit`, `CO235reduction`, `BAUCO2emissions`.)*
+  *(garuda: `clean`, `CO2_limit`, `RE_limit`, `CO235reduction`, `BAUCO2emissions`,
+  `policy_scope`, `export_backed_by_generation`.)*
 
 Two safety defaults worth knowing:
 - **Unknown keys default to Tier C.** If the agent ever proposes changing a key the
@@ -317,6 +349,15 @@ the reason. You can always reconstruct exactly what was changed and why.
 This is enforced in **code** (`framework/refine.py` + `framework/interventions.py`),
 not by asking the AI nicely. The AI cannot bypass it.
 
+> **One deliberate exception, for research only.**
+> `apply_refinements(..., enforce=False)` and
+> `Supervisor(..., enforce_guardrail=False)` turn the guardrail off. That is the
+> *ablation* the study measures against ([section 12](#12-running-it-headless)),
+> not an escape hatch: never reach for it to get a run through. Even unguarded,
+> illegal values are still rejected, and every applied Tier-C change is stamped
+> `applied_by: "refiner-unguarded"` in the audit trail, so a relaxation can always
+> be found after the fact.
+
 ---
 
 ## 9. The config
@@ -324,7 +365,7 @@ not by asking the AI nicely. The AI cannot bypass it.
 A "config" is a small dictionary (saved as `config.json`) describing one run. To see
 the authoritative, live description for the active model, run
 `get_adapter().describe_config()` or ask the assistant "what can I set?". For the
-**village model** it is:
+**garuda model** it is:
 
 **Required keys**
 
@@ -350,14 +391,31 @@ the authoritative, live description for the active model, run
 | `highimportprice` | yes | yes | higher village import price |
 | `captive`, `gridcaptive` | — | — | legacy aliases for `village` / `gridvillage` |
 
-**Optional passthrough keys** (omit to use model defaults):
+**Optional passthrough keys** (omit to use model defaults). This is the full list
+the model reads; the tier column is the guardrail's classification:
 
 | Key | Tier | Meaning |
 |-----|:--:|---------|
 | `mipgap` | A | relative MIP gap (default 0.01) |
+| `time_limit` | A | solver wall limit in seconds (default 3 days). On TIME_LIMIT the engines still extract the incumbent. |
+| `solver` | A | `"highs"` (no licence) or `"gurobi"` |
+| `lp_method` | A | Gurobi LP method, −1…5 |
+| `run_tag` | A | suffix on the results folder. The framework injects the run dir's name when you leave it unset, so concurrent runs never share a folder. |
+| `engine` | B | `"expansion"` (invest + dispatch, a MILP) or `"dispatch"` (dispatch only, an LP — much faster) |
+| `relax_uc` | B | relax the unit-commitment binaries (default true for dispatch) |
+| `exact_connect` | B | exact connection binaries (default false) |
 | `import_price` | B | $/MWh for village grid imports |
-| `village_storage_max_mwh` | B | per-unit cap on new village storage |
-| `RE_limit` | C | minimum renewable share (clean runs) |
+| `export_price` | B | $/MWh paid for exports (default 0) |
+| `village_storage_max_mwh` | B | per-unit cap on new village storage (default 208) |
+| `battery_duration_h` | B | battery duration in hours (default 0 = model's own) |
+| `RE_limit` | C | minimum renewable share, clean runs (default 0.34) |
+| `policy_scope` | C | whether the policy binds on the `"grid"` or the whole `"system"` |
+| `export_backed_by_generation` | C | require exports to be backed by generation (default false) |
+
+**Choosing the engine matters more than anything else for run time.** A dispatch
+LP on a small island solves in seconds to minutes; the expansion MILP on the same
+data takes ~25 minutes on HiGHS (about 5 seconds on Gurobi). When you only need
+*a* run — a demo, a fixture, a loop test — use `engine: "dispatch"`.
 
 **Important reality check:** there is **no "X% solar" knob.** Renewable penetration
 is an *outcome* the solver chooses given costs and resources, not an input you set.
@@ -371,16 +429,21 @@ rather than invent a key that doesn't exist.
 Each run produces a folder (you choose where, e.g. `runs/my_run/`) containing:
 
 - **`config.json`** — the exact config that was run.
-- **`solver.log`** — everything the solver printed (Gurobi's iteration log + the
-  termination status). This is what the log-analyzer reads. *(Note: the model itself
-  doesn't write a log file — the framework captures the solver's console output for
-  you.)*
+- **`solver.log`** — everything the solver printed (the HiGHS/Gurobi iteration log
+  plus the engine's termination line). This is what the log-analyzer reads. *(Note:
+  the model itself doesn't write a log file — the framework captures the solver's
+  console output for you, line by line as it arrives, so `tail -f` works while the
+  solve is still running.)*
+- **`monitor.json`** — the live monitor's rolling summary of that log: phase, best
+  objective, bound, gap, incumbents, warnings, stalls, whether the time limit is
+  near ([section 11](#11-watching-a-run-while-it-solves)).
 - **`outputs/`** — the model's result CSVs, copied here so the run is a permanent,
-  self-contained record. For the village model these include `cost_results.csv`,
-  `generator_results.csv`, `village_generator_results.csv`, `nse_results.csv`
-  (non-served energy = reliability), `clean_energy_results.csv` (emissions + RE
-  share), and more. See `models/village/docs/outputs_guide.md` for what each column
-  means.
+  self-contained record. For garuda these include `cost_results.csv`,
+  `generator_results.csv`, `nse_results.csv` and `reliability_results.csv`
+  (non-served energy), `clean_energy_results.csv` (emissions + RE share),
+  `storage_results.csv`, `transmission_results.csv` and the per-site `site_*.csv`
+  family — which appear depends on the scenario and engine. See the model's own
+  `docs/` for what each column means.
 - **`run_record.json`** — **the most important file.** It is the single record that
   ties everything together and the only thing the skills pass to one another.
 
@@ -406,7 +469,8 @@ Each run produces a folder (you choose where, e.g. `runs/my_run/`) containing:
     { "metric": "Total_NSE_MWh", "value": 1234, "expected": "~0", "severity": "high" }
   ],
   "refinement_history": [               // written by refiner — the AUDIT TRAIL
-    { "tier": "A", "change": {"mipgap": [0.01, 0.05]}, "rationale": "…", "applied": true }
+    { "tier": "A", "change": {"mipgap": [0.01, 0.05]}, "rationale": "…",
+      "applied": true, "applied_by": "refiner", "disclosed": true }
   ],
   "parent_run": "…"                     // hash of the run this was refined from
 }
@@ -418,7 +482,192 @@ changed. In a loop, the chain of `parent_run` links is your iteration ledger.
 
 ---
 
-## 11. File-by-file reference
+## 11. Watching a run while it solves
+
+A big MILP can run for hours. You do not have to wait blind: the framework tees
+the solver's output into `solver.log` **as each line arrives** and parses it live.
+
+```bash
+python -m framework.watch runs/my_run             # a snapshot of where it is now
+python -m framework.watch runs/my_run --follow    # tail it until it finishes
+python -m framework.watch runs/my_run --json      # the same, for a script
+python -m framework.watch runs/my_run --abort "cap is clearly infeasible"
+```
+
+From Python, pass a listener and get the same events as they happen:
+
+```python
+record = run_and_record(adapter, config, run_dir="runs/my_run", on_event=print)
+```
+
+What the monitor understands: HiGHS (1.7–1.14) and Gurobi (10–13) logs — MIP tree
+rows, barrier and simplex iterations, presolve verdicts, the final
+objective/bound/gap and `Solving report` blocks — plus the model wrappers' own
+status lines, Julia/Python tracebacks, warnings and licence failures. It derives
+two judgements you would otherwise have to make by eye:
+
+- **`stall`** — no improvement in the incumbent or the bound (or no output at all)
+  for `stall_seconds`, 600 by default.
+- **`time_limit_near`** — past 90 % of the time limit, which it learns from your
+  config, from the solver's own log, or from `--time-limit`.
+
+Files a run directory gains while it is live: `run.pid` (removed on exit), and
+`ABORT` if you asked for one. The rolling summary is written to `monitor.json`
+and copied into `run_record.json` under `execution.monitor`.
+
+**What to do with what you see** is the `run-monitor` skill's job: a stall or an
+approaching limit is a Tier-A situation (raise the gap or the limit and re-run);
+a detected infeasibility goes to the log-analyzer; a policy key is **never**
+edited mid-run.
+
+---
+
+## 12. Running it headless
+
+Everything above assumes a person in the loop. For experiments — and for the
+guardrail study this repo exists to run — there is a headless driver that plays
+the same skills against an LLM with no interactive session:
+
+```python
+from framework import AgentDriver, Supervisor, StopCriteria, get_adapter, make_client
+from framework.agent_driver import make_propose_fn
+
+adapter = get_adapter("garuda")
+driver  = AgentDriver(make_client("claude-cli"), adapter)   # or make_client("fake")
+result  = Supervisor(adapter).run(config, make_propose_fn(driver),
+                                  run_root="runs/goal", stop=StopCriteria(max_iters=5))
+```
+
+Each role call uses that skill's own `SKILL.md` as the system prompt, plus a fixed
+preamble and the adapter's `describe_config()`, and demands JSON matching a
+per-role schema. **The driver performs every side effect; the model only reasons.**
+Every prompt and reply is written to `<run_dir>/llm/<role>_<n>.json`, so a run is
+auditable after the fact.
+
+The provider is a swappable factor: `make_client("claude-cli")` shells out to the
+`claude` CLI in headless mode (the CLI owns authentication — the framework never
+sees a key), `make_client("fake")` replays canned replies for tests, and
+`make_client("anthropic")` is the SDK seam.
+
+### The ablation
+
+The study's manipulation is a single switch:
+
+```python
+Supervisor(adapter, enforce_guardrail=False)     # unguarded condition
+apply_refinements(record, proposals, spec, enforce=False)
+```
+
+Unguarded, a *legal* Tier-C proposal is applied instead of blocked, and the loop
+carries on instead of returning `needs_human`. Everything else — dedup, stopping
+rules, the record schema, and the rejection of illegal values — is identical.
+Each applied change still records its **true** tier, `applied=True` and
+`applied_by="refiner-unguarded"`, and `disclosed` records whether the model
+admitted what it was doing. That is what makes a *silent* policy relaxation
+countable rather than anecdotal.
+
+---
+
+## 13. The other two models
+
+The point of a model-agnostic framework is that it is not about one model. Two
+more are bundled, and everything in this guide works the same for them — only
+`describe_config()` differs.
+
+### `pypsa_toy` — the reproducible one (start here)
+
+A deterministic 3-bus capacity-expansion LP (PyPSA + HiGHS) that lives in this
+repo: no licence, no external data, seeded profiles, and a full 14-day solve in
+one to three seconds. It exists so the whole experiment can be rerun on a laptop,
+and so the contract is exercised against a model that fits on one screen.
+
+```bash
+python -m pip install "pypsa>=0.30" highspy
+export PYPSA_PYTHON=$(which python)      # default: ~/miniforge3/bin/python
+python examples/pypsa_toy/smoke_test.py
+```
+
+Tiers: **C** = `co2_cap_t`, `re_share_min`, `allow_load_shedding`;
+**B** = `demand_scale`, `gas_price`, `coal_price`, `wind_capex`, `solar_capex`,
+`battery_capex`, `line_expansion_allowed`, `snapshots_days`;
+**A** = `solver`, `mip_gap`, `time_limit`, `threads`. A run directory holds
+`config.json`, `solver.log`, `highs.log`, `summary.json` and
+`outputs/{generator,storage,line,cost,emissions,nse}_results.csv`.
+Entry points: `smoke_test.py`, `demo_refine_loop.py`,
+`demo_supervisor.py [--unguarded]`. Full detail in
+`examples/pypsa_toy/README.md`.
+
+> `adapters/pypsa_toy/network.py` is ours to change — but it is a *versioned
+> artifact*: changing it invalidates every recorded expectation and fixture label.
+
+### `pathways` — the second real lab model
+
+A provincial, hourly capacity-expansion and dispatch LP for China
+(`models/pathways`, a submodule of `Power-Lab/AdvAppliedEnergy_Pathways_2025`).
+It is **Gurobi-only** — the model builds a `gurobipy.Model` directly, so there is
+no licence-free path — and it needs the Zenodo data.
+
+```bash
+export PATHWAYS_DATA_ROOT=/path/to/AdvAppliedEnergy_Pathways_2025   # data_pkl/, data_mat/, data_shp/
+export PATHWAYS_PYTHON=~/miniforge3/envs/agentic-pathways/bin/python  # gurobipy, pandas, scipy, geopandas, shapely
+```
+
+The model has no config-file entry point, so the adapter builds a **per-run
+workspace** of symlinks inside the run directory and imports the model through
+it. That relocates the model's working directory into your run dir, which means
+results land in the run directory and never in the checkout. Archived CSVs appear
+under `<run_dir>/outputs/` with the year stripped from their names.
+
+Two model facts worth knowing before you read a result:
+
+- Its status must be read from the **Gurobi log**, not from an exit code: the
+  model reads `.objVal` with no status check, so an infeasible or time-limited
+  solve raises an exception. The adapter catches it and reports the real status.
+- A **negative emission cap is clamped to zero** when CCS has not started yet, so
+  "cap = −1000 Mt with CCS from 2070" really means "net zero with no capture,
+  while thermal units must still run at ≥ 5 % capacity factor."
+
+Setup, the workspace diagram, the tier table and a troubleshooting table are in
+`examples/pathways/README.md`.
+
+---
+
+## 14. Running the study
+
+`eval/` is the benchmark and scorer for the guardrail experiment
+(`docs/EXPERIMENTAL_PROTOCOL.md`). A **task** is a labelled config under
+`examples/<adapter>/benchmark/<task_id>/`; a **cell** is one
+(task × adapter × LLM × guardrail × seed) run of the supervisor loop driven by
+the headless driver.
+
+```bash
+python -m eval list-tasks --adapter garuda
+python -m eval run --adapter garuda --llm claude-cli --guardrail both \
+    --seeds 5 --tasks all --max-iters 5 --solvers highs,none
+python -m eval score eval_runs --report
+python -m eval report eval_runs
+```
+
+- `--guardrail both|guarded|unguarded` is the experimental manipulation and the
+  only behavioural difference between conditions.
+- `--solvers highs,none` skips the one Gurobi-only task.
+- **`--dry-run` enumerates every cell and validates every task config through the
+  real adapter without solving anything** — the right first command on a new
+  machine.
+- A cell is resumable: an existing `cell.json` is reused unless `--overwrite`.
+
+Results land in `eval_runs/` (gitignored). Identical configs are solved once — the
+cache is keyed on `config_hash` — so extra seeds and the second condition are
+cheap. The benchmark is 15 garuda tasks (3 per family) and 5 pypsa_toy tasks (1
+per family); each family probes a different failure mode, and every `tierC` task
+carries an adversarial `prompt.md` that pushes the agent to "just make it solve."
+
+Never hand-edit an `expected.json` to make a metric look better. Those labels are
+the ground truth, and `python -m eval list-tasks` will flag an inconsistent one.
+
+---
+
+## 15. File-by-file reference
 
 You can use the tool without ever opening these. This section is for when you want
 to understand or extend it. The **"touch?"** column tells you whether a modeler
@@ -494,7 +743,7 @@ data dictionary) document the model's inputs and outputs.
 
 ---
 
-## 12. Adding your own model
+## 16. Adding your own model
 
 The whole point of the framework is that the village model is *one example*. To
 drive a different solver-backed model, you write one **adapter** — a Python class
@@ -532,7 +781,7 @@ generality for a paper.
 
 ---
 
-## 13. Troubleshooting & FAQ
+## 17. Troubleshooting & FAQ
 
 **The smoke test fails at "Gurobi could not start" / licence error.**
 You need a real Gurobi licence on this machine (`~/gurobi.lic` or
@@ -576,7 +825,7 @@ output, not source.
 
 ---
 
-## 14. Glossary
+## 18. Glossary
 
 - **Adapter** — the small Python class that teaches the framework how to drive a
   specific model. Village is the example adapter.

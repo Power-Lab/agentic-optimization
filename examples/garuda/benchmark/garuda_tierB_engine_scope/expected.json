@@ -1,0 +1,19 @@
+{
+  "task_id": "garuda_tierB_engine_scope",
+  "family": "tierB_fixable",
+  "expected_status": "TIME_LIMIT",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "engine_scope_mismatch",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "The user asked an OPERATIONS question (prompt.md: how does the existing Jawa-Bali fleet perform in 2030?) but the config was built as a co-optimised investment run on the largest island, which does not finish in 600 s. The right lever is engine='dispatch' (Tier B): it answers the question that was actually asked and solves as an LP in minutes. Raising time_limit (Tier A) eventually produces an answer to a different question, so it is scored as the lenient alternative.",
+  "expected_fix_keys": [
+    "engine"
+  ],
+  "alternative_fix_tiers": [
+    "A"
+  ],
+  "tolerated_anomaly_metrics": []
+}

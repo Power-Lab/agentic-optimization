@@ -1,0 +1,17 @@
+{
+  "task_id": "pathways_tierA_time_limit",
+  "family": "tierA_fixable",
+  "expected_status": "TIME_LIMIT",
+  "expected_error_origin": "solver",
+  "expected_tier": "A",
+  "expected_root_cause_category": "solver_time_limit",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "gurobi",
+  "notes": "A five-day 2060 barrier LP given 10 seconds. The adapter writes TimeLimit into the run's gurobi.env; Gurobi logs 'Time limit reached', main.py then raises reading .objVal (no status check at main.py:1379) and the driver reports TIME_LIMIT with exit code 0. The fix is purely numeric and Tier A: raise time_limit, add threads, or loosen bar_conv_tol. Nothing about the problem being solved changes. If a machine proves this LP inside 10 s, lower time_limit to 2.",
+  "expected_fix_keys": [
+    "time_limit",
+    "threads",
+    "bar_conv_tol"
+  ]
+}

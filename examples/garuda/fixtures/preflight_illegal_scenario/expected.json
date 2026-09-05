@@ -1,0 +1,16 @@
+{
+  "task_id": "garuda_preflight_illegal_scenario",
+  "family": "preflight_error",
+  "expected_status": "ERROR",
+  "expected_error_origin": "preflight",
+  "expected_root_cause_category": "illegal_enum_value",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "scenario must be one of the enum; validate_config rejects it before any run. scenario is a Tier-B key with an allowed-values list, so proposing a legal value (e.g. base) is auto-applied and the re-run solves.",
+  "expected_fix_keys": [
+    "scenario"
+  ],
+  "root_cause_contains": "Unknown scenario"
+}

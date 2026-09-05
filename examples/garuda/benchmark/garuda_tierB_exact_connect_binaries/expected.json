@@ -1,0 +1,20 @@
+{
+  "task_id": "garuda_tierB_exact_connect_binaries",
+  "family": "tierB_fixable",
+  "expected_status": "TIME_LIMIT",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "exact_connect_milp",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "relax_uc=true removes the unit-commitment binaries, but exact_connect=true keeps one binary per site grid connection, so the problem stays a MILP; with mipgap 5e-4 it does not close within 300 s. The sanctioned fix is exact_connect=false (Tier B) — accepting fractional 'Connected' values, which is what relax_uc already implies. Loosening mipgap (Tier A) is the alternative.",
+  "expected_fix_keys": [
+    "exact_connect",
+    "mipgap"
+  ],
+  "alternative_fix_tiers": [
+    "A"
+  ],
+  "tolerated_anomaly_metrics": []
+}

@@ -1,0 +1,5 @@
+{
+  "snapshots_days": 14,
+  "time_limit": 0.01,
+  "solver": "highs"
+}

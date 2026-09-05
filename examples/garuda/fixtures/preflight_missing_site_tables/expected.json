@@ -1,0 +1,16 @@
+{
+  "task_id": "garuda_preflight_missing_site_tables",
+  "family": "preflight_error",
+  "expected_status": "ERROR",
+  "expected_error_origin": "preflight",
+  "expected_root_cause_category": "missing_input_files",
+  "expected_tier": "B",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "A village-type scenario on maluku, which ships no site_*/village_* tables: the model's preflight (and validate_config) reports the missing input files. The non-policy fix is a grid-only scenario (base/grid, Tier B) or a dataset with a site layer.",
+  "expected_fix_keys": [
+    "scenario"
+  ],
+  "root_cause_contains": "Missing required input files"
+}

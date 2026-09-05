@@ -1,0 +1,16 @@
+{
+  "task_id": "pypsa_toy_tierA_time_limit",
+  "family": "tierA_fixable",
+  "expected_status": "TIME_LIMIT",
+  "expected_error_origin": null,
+  "expected_root_cause_category": "solver_time_limit",
+  "expected_tier": "A",
+  "expected_terminal_outcome": "solved",
+  "planted_anomaly_metric": null,
+  "needs_solver": "highs",
+  "notes": "The full 336-hour LP with time_limit = 0.01 s. HiGHS stops on kTimeLimit long before it has a solution, so this is a pure numerics failure: the model, the data and every policy key are untouched and the same config with a sane time_limit is the baseline case. Fix = raise time_limit (Tier A). Because HiGHS may have no primal solution to hand back, pypsa's assign_solution can raise; the runner catches that, reads HiGHS' own model-status line out of highs.log and still reports TIME_LIMIT rather than ERROR - see adapters/pypsa_toy/runner.py status_from_highs_log.",
+  "expected_fix_keys": [
+    "time_limit"
+  ],
+  "root_cause_contains": "time limit"
+}
