@@ -5,3 +5,12 @@
 	path = models/garuda
 	url = https://github.com/kaarthi19/garuda.git
 	branch = server-results
+[submodule "models/captive_indonesia"]
+	path = models/captive_indonesia
+	url = https://github.com/Power-Lab/captive-indonesia-2025.git
+[submodule "models/energy_econ_storage"]
+	path = models/energy_econ_storage
+	url = https://github.com/Power-Lab/EnergyEcon_Storage_2026.git
+[submodule "models/resource_adequacy"]
+	path = models/resource_adequacy
+	url = https://github.com/Power-Lab/JEPO_ResourceAdequacy_2026.git

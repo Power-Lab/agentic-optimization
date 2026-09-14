@@ -19,14 +19,24 @@ concept-note tasks are implemented as composable agent skills:
 > scenario-builder → model-runner (+ run-monitor) → log-analyzer /
 > output-analyzer → **guardrailed refiner** → supervisor (closed loop)
 
-Three models plug into the same contract, skills and guardrail — they are
+Six adapters plug into the same contract, skills and guardrail — they are
 *examples of models that plug in*, not the framework:
 
 | Adapter | Model | Solver | Cost of one run |
 |---|---|---|---|
 | `garuda` | zonal capacity-expansion / dispatch for Indonesia (`models/garuda`, submodule) | HiGHS or Gurobi | dispatch LP: seconds–minutes; expansion MILP: minutes–hours |
+| `captive` | captive industrial power capacity expansion for Indonesia (`models/captive_indonesia`, submodule) | Gurobi | minutes–hours |
+| `storage` | WECC storage bidding and dispatch (`models/energy_econ_storage`, submodule) | HiGHS + Gurobi | long batch (90 periods) |
+| `resource_adequacy` | Northeast China UCED resource adequacy (`models/resource_adequacy`, submodule) | Gurobi | very long batch (54 cases) |
 | `pathways` | provincial hourly capacity-expansion + dispatch for China (`models/pathways`, submodule) | Gurobi only | minutes (5 days) to ~20 h (full year) |
 | `pypsa_toy` | a deterministic 3-bus LP that lives in this repo | HiGHS | 1–3 seconds |
+
+The four Power Lab research models are `garuda`, `captive`, `storage`, and
+`resource_adequacy`. `pathways` and `pypsa_toy` remain additional portability
+and reproducibility cases. The legacy batch scripts for `storage` and
+`resource_adequacy` are deliberately exposed only at their real upstream
+granularity; the adapter does not pretend that unsupported per-case controls
+exist.
 
 `pypsa_toy` is the reproducible leg: no licence, no external data, seeded
 profiles, so the whole study can be rerun end to end on a laptop.
@@ -47,7 +57,7 @@ The generalizable, publishable artifacts are deliberately kept model-agnostic:
 3. **A thin adapter interface** (`framework/adapter.py`) — five methods a model
    implements to plug in — plus an **adapter registry** (`framework/registry.py`)
    so the skills resolve the *active* adapter (`get_adapter()`) and never name a
-   model. Adapters self-register on import; with three registered you must set
+   model. Adapters self-register on import; with multiple registered you must set
    `AGENTIC_ADAPTER` (or pass `name=`) to choose.
 4. **The closed supervisory loop** (`framework/supervisor.py`) — runs the
    iterate loop with a config-hash dedup, stopping conditions, and in-loop
@@ -66,9 +76,12 @@ The generalizable, publishable artifacts are deliberately kept model-agnostic:
 framework/              model-agnostic core: contract, taxonomy, registry, runner,
                         refine, analyze, supervisor, process/monitor, llm/driver
 adapters/garuda/        reference adapter (local + remote backends)
+adapters/captive/       Indonesia captive-power model adapter
+adapters/storage/       WECC storage batch adapter
+adapters/resource_adequacy/ Northeast China UCED batch adapter
 adapters/pathways/      second real model, via a per-run workspace shim
 adapters/pypsa_toy/     the in-repo reproducible model (network + runner + adapter)
-models/                 garuda, pathways — git submodules, NEVER modified
+models/                 five external model repositories as submodules, NEVER modified
 .claude/skills/         the agent skills (model-agnostic; resolve via the registry)
 examples/<adapter>/     per-model drivers: smoke test, demos, fixtures, benchmark
 eval/                   the study's benchmark loader, cell runner, cache, scorer
@@ -82,7 +95,7 @@ name, filename or config key appears there. Model specifics live in
 ## Setup
 
 ```bash
-git submodule update --init --recursive        # fetch the two model submodules
+git submodule update --init --recursive        # fetch the model submodules
 pip install -e .                                # framework (stdlib only)
 ```
 
@@ -92,6 +105,8 @@ own interpreter**, so nothing heavy has to be installed alongside the framework:
 ```bash
 # garuda: Julia + HiGHS (Gurobi optional)
 julia --project=models/garuda models/garuda/bootstrap.jl
+# captive/storage/resource_adequacy: use each model's Julia environment;
+# storage and resource_adequacy require a working Gurobi licence
 # pypsa_toy: any interpreter with pypsa + highspy
 pip install "pypsa>=0.30" highspy && export PYPSA_PYTHON=$(which python)
 # pathways: a conda env with gurobipy/geopandas + the Zenodo data

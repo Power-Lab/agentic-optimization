@@ -17,6 +17,9 @@ pypsa = ["pypsa>=0.30", "highspy"]
 # The Pathways model needs a conda env (gurobipy + geopandas + scipy) and the
 # Zenodo data; pip can provision neither. See examples/pathways/README.md.
 pathways = []
+# The three additional Julia adapters execute their model submodules in
+# separate Julia environments; Python-side integration remains stdlib-only.
+julia-models = []
 # Only for framework.llm.AnthropicAPIClient (a seam; the default provider is
 # the `claude` CLI, an external binary rather than a Python dependency).
 anthropic = ["anthropic>=1.0"]

@@ -15,7 +15,14 @@ adapter is registered.
 from __future__ import annotations
 
 #: Adapter packages that self-register on import, in resolution order.
-BUNDLED = ("garuda", "pathways", "pypsa_toy")
+BUNDLED = (
+    "garuda",
+    "captive",
+    "storage",
+    "resource_adequacy",
+    "pathways",
+    "pypsa_toy",
+)
 
 #: Names of the adapters that failed to import, mapped to the exception text.
 #: Useful when ``get_adapter("x")`` raises and you want to know why.
